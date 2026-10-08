@@ -568,9 +568,7 @@ describe('a push / pull slide (推拉: the official impulse under friction)', ()
   });
 
   test('a pushed enemy faces the way it is pushed, not the route it resumes', async () => {
-    // The official turns a displaced unit towards the force (_dontChangeFaceByDirection is an opt-in flag); our facing
-    // comes from the snapshot's vx, which after a displacement points back down the route the enemy walks again —
-    // i.e. against the push (player report: 被推开敌人的方向反过来了).
+    // The default slide follows the force; the Wild Mane S2 exception is covered separately below.
     const v = await view(10);
     v.sync({ x: 5, y: 12, hp: 100, maxHp: 100, sp: 0, spMax: 0, flags: 0, anim: 0, vx: -1.2 });
     assert.equal(v.visFacing, -1, 'walking left before the push');
@@ -580,6 +578,27 @@ describe('a push / pull slide (推拉: the official impulse under friction)', ()
     assert.equal(v.visFacing, 1, 'still facing the push in flight');
     v.slideTo(5.2, 12);                       // now pulled back to the left
     assert.equal(v.visFacing, -1, 'and the other way for a pull');
+  });
+
+  test('Wild Mane S2 keeps the enemy facing left while a rightward push slides it', async () => {
+    const v = await view(14);
+    v.sync({ x: 5, y: 12, hp: 100, maxHp: 100, sp: 0, spMax: 0, flags: 0, anim: 1, vx: -1 });
+    assert.equal(v.visFacing, -1, 'facing left before the push');
+    v.slideTo(6.7, 12, { at: 3, dur: 0.8, keepFacing: true });
+    assert.equal(v.visFacing, -1, 'unchanged when the push begins');
+    v.sync({ x: 6.7, y: 12, hp: 100, maxHp: 100, sp: 0, spMax: 0, flags: 0, anim: 1, vx: 20 }, 2.95);
+    v.update(1 / 60, cam(), 0);
+    assert.equal(v.visFacing, -1, 'a positive interpolated velocity cannot flip it before the destination snapshot');
+    v.sync({ x: 6.7, y: 12, hp: 100, maxHp: 100, sp: 0, spMax: 0, flags: 0, anim: 1, vx: -1 }, 3);
+    const dur = v.slide.dur;
+    step(v, dur / 2);
+    assert.ok(v.x > 5 && v.x < 6.7, `still slides right (${v.x})`);
+    assert.equal(v.visFacing, -1, 'unchanged in flight');
+    step(v, dur / 2);
+    assert.equal(v.slide, null, 'slide ends normally');
+    assert.equal(v.x, 6.7);
+    v.sync({ x: 6.6, y: 12, hp: 100, maxHp: 100, sp: 0, spMax: 0, flags: 0, anim: 1, vx: 1 });
+    assert.equal(v.visFacing, 1, 'normal snapshot facing resumes after the slide');
   });
 
   test('a snapshot in flight does not teleport it (the slide owns the position until it lands)', async () => {

@@ -54,7 +54,7 @@ export class BattleDisplacement {
    * push (PRTS 推与拉: one frame less of travel than a 弹道 push — constants.js PUSH_TILES_EFFECT / PUSH_EFFECT_SKILLS).
    * Returns the tiles moved.
    */
-  push(e, force, { from = null, dir = null, fixed = false, fixedAngle = false, inward = false, effect = false } = {}) {
+  push(e, force, { from = null, dir = null, fixed = false, fixedAngle = false, inward = false, effect = false, keepFacing = false } = {}) {
     if (!this._displaceable(e)) { this._staticForce(e, force, false); return 0; }
     let level = this.forceLevel(e, force);
     const fx0 = fin(from?.x, e.x), fy0 = fin(from?.y, e.y);
@@ -76,7 +76,7 @@ export class BattleDisplacement {
     // 失衡 for the row's 位移时间 — also when the 特效 column or a wall shortens the slide [ASSUMED for the wall]; a slide a
     // wall stops at the first step gets the 0.1 s floor, like a body that cannot move [ASSUMED: 碰撞、停止 is 待补充]
     const hold = pushUnbalance(level);
-    const moved = this.displace(e, { x: ux, y: uy }, dist, { dur: hold });
+    const moved = this.displace(e, { x: ux, y: uy }, dist, { dur: hold, keepFacing });
     if (hold > 0) this._unbalance(e, moved > 0 ? hold : UNBALANCE_MIN);
     return moved;
   }
@@ -177,7 +177,7 @@ export class BattleDisplacement {
    * ⇒ no movement (_displaceable). The tiles it may cross follow its movement (`motion`): a hovering enemy walks the
    * ground, so it stays on ground-passable tiles.
    */
-  displace(e, dir, distance, { dur = 0 } = {}) {
+  displace(e, dir, distance, { dur = 0, keepFacing = false } = {}) {
     if (!this._displaceable(e) || !dir) return 0;
     const dxv = fin(dir.x, 0), dyv = fin(dir.y, 0);
     const len = hypot(dxv, dyv);
@@ -202,7 +202,7 @@ export class BattleDisplacement {
       e.atkStandUntil = -Infinity;
       if (e.route) e.route.pts = null;
       // `dur` (game s): the 失衡 the push / pull gives — the client's slide takes that long (render/units.js slideTo)
-      this.fx('displace', dur > 0 ? { x: e.x, y: e.y, id: e.id, dur } : { x: e.x, y: e.y, id: e.id });
+      this.fx('displace', { x: e.x, y: e.y, id: e.id, ...(dur > 0 ? { dur } : {}), ...(keepFacing ? { keepFacing: true } : {}) });
     }
     return moved;
   }
