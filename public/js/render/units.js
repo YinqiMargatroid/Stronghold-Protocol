@@ -880,8 +880,8 @@ export class UnitView {
     const rate = this.ctx.animRate?.() || 1;
     const T = Math.max(0.05, (opts.dur > 0 ? opts.dur / rate : clamp(DISPLACE_SLIDE * Math.sqrt(D), 0.12, 0.45)) / f);
     // v0 = 2D/T and a = v0/T run the distance in exactly T with the velocity reaching 0 there, integrated in update().
-    // Push fx carries keepFacing by default: the victim retains its pre-hit facing through the slide. Pulls and raw
-    // displacements have no flag and still face their force; snapshots take over when the slide ends.
+    // Push and pull fx carry keepFacing by default: the victim retains its pre-hit facing through the slide. Raw
+    // displacements have no flag and still face their travel; snapshots take over when the slide ends.
     if (this.isEnemy && !opts.keepFacing) this.visFacing = dx < 0 ? -1 : 1;
     const v0 = 2 * D / T;
     const at = Number.isFinite(opts.at) ? opts.at : -Infinity;

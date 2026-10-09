@@ -31,7 +31,7 @@ test('a displacement puts a `displace` fx into the event stream the client recei
   assert.equal(disp[4].y, undefined, 'e[4] carries no y either');
 });
 
-test('directional and radial pushes preserve facing by default; pull and an explicit override do not', () => {
+test('directional and radial pushes and hook pulls preserve facing; explicit overrides and raw moves do not', () => {
   for (const directional of [false, true]) {
     const h = makeBattle({
       defs: { enemies: { enemy_walker: walker({ speed: 0.01 }) } },
@@ -48,9 +48,15 @@ test('directional and radial pushes preserve facing by default; pull and an expl
     assert.equal(fx()?.[4]?.keepFacing, true, 'both official push direction classes preserve the prior facing');
 
     assert.ok(h.b.pull(e, 0, { to: { x: 5, y: 10 } }) > 0);
-    assert.equal(fx()?.[4]?.keepFacing, undefined, 'pull keeps its own force-facing rendering');
+    assert.equal(fx()?.[4]?.keepFacing, true, 'hook pull preserves the pre-hit facing by default');
+
+    assert.ok(h.b.pull(e, 0, { to: { x: 9, y: 10 }, keepFacing: false }) > 0);
+    assert.equal(fx()?.[4]?.keepFacing, undefined, 'a pull source can opt out');
 
     assert.ok(h.b.push(e, 0, { ...opts, keepFacing: false }) > 0);
-    assert.equal(fx()?.[4]?.keepFacing, undefined, 'a source-specific exception can opt out');
+    assert.equal(fx()?.[4]?.keepFacing, undefined, 'a push source can opt out');
+
+    assert.ok(h.b.displace(e, { x: -1, y: 0 }, 0.2) > 0);
+    assert.equal(fx()?.[4]?.keepFacing, undefined, 'raw displace remains unmarked');
   }
 });

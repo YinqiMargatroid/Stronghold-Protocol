@@ -567,19 +567,19 @@ describe('a push / pull slide (推拉: the official impulse under friction)', ()
     assert.equal(v.x, 7.7, 'and it still lands');
   });
 
-  test('an unmarked displacement such as a pull still faces the force', async () => {
+  test('an unmarked raw displacement still faces its travel direction', async () => {
     const v = await view(10);
     v.sync({ x: 5, y: 12, hp: 100, maxHp: 100, sp: 0, spMax: 0, flags: 0, anim: 0, vx: -1.2 });
     assert.equal(v.visFacing, -1, 'walking left before the pull');
-    v.slideTo(7.7, 12);                       // unmarked pull to the right
-    assert.equal(v.visFacing, 1, 'faces the pull at once');
+    v.slideTo(7.7, 12);                       // unmarked raw move to the right
+    assert.equal(v.visFacing, 1, 'faces the movement at once');
     for (let i = 0; i < 20; i++) v.update(v.slide.dur / 40, cam(), 0);
-    assert.equal(v.visFacing, 1, 'still facing the pull in flight');
-    v.slideTo(5.2, 12);                       // another unmarked displacement to the left
-    assert.equal(v.visFacing, -1, 'and the other way for a pull');
+    assert.equal(v.visFacing, 1, 'still facing the movement in flight');
+    v.slideTo(5.2, 12);                       // another unmarked raw move to the left
+    assert.equal(v.visFacing, -1, 'and the other way for a raw move');
   });
 
-  test('a flagged push keeps the enemy facing left while sliding right, then resumes snapshot facing', async () => {
+  test('a flagged push or pull keeps the enemy facing left while sliding right, then resumes snapshot facing', async () => {
     const v = await view(14);
     v.sync({ x: 5, y: 12, hp: 100, maxHp: 100, sp: 0, spMax: 0, flags: 0, anim: 1, vx: -1 });
     assert.equal(v.visFacing, -1, 'facing left before the push');
