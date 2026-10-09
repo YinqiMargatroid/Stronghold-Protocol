@@ -988,6 +988,7 @@ instance) and skip `'counter'` / `'reflect'` damage. When the guard trips, the l
   attacks and heals keep their own rhythm, and its first cast comes as soon as it is ready (#124). `gainSp` is ignored while a duration/ammo/toggle skill
   runs (its bar shows the skill), whatever the reason, and — any reason but `'init'` — while the unit has the `noSp`
   flag (阻回: "停止并阻止任意形式的技力回复"; the operators' 凋亡 burst, §3).
+- 蕾缪安的通缉目标通过 `setExtraRange` 加入实际索敌范围；#428 发现 `DEFAULT` 只检查初始范围时，她会对范围外目标普攻却不开 S3。她的 S1–S3 用 `SkillSpec.triggerExtraRange` 使这些目标在下一次攻击检查时也满足开启条件，保留基础策略的攻击间隔。睡眠目标可在已经开始通缉计时后获得标记，但不可选中时不能开启技能或消耗弹药；苏醒后继续索敌。联防和双人 Boss 战场里的另一半场属于同一个 `Battle`，因此上述目标、纯烬艾雅法拉 S3 的全场治疗/天赋范围、远牙 S3 开启后的直线射程都可跨半场。远牙 S3 的自动开启仍按官方技能策略的有限 `CUSTOM_RANGE` 格子判断。
 - Kinds: `duration` (mods for `duration` s), `ammo` (mods until `ammo` attacks were made, optional duration cap),
   `instant` (onStart + optional one-shot attack override applied to the next attack), `charges` (instant with charges),
   `passive` (always on from deployment, no SP), `toggle` (stays on until death once activated).
@@ -1089,6 +1090,7 @@ Element conventions of the kits (user playtest #5 #3; official term dictionary: 
   ammo,                  // attacks (ammo kind)
   spCost, initSp, charges, spType: 'time'|'attack'|'hurt'|'none',   // optional overrides of the data values
   trigger: 'DEFAULT' | { rule, grid, allies?, hpAtMost? },     // optional override (allies / hpAtMost: an injured ally condition, §7.1)
+  triggerExtraRange: bool, // optional: DEFAULT also checks extraRangeKeys at the next attack, for special targeting (蕾缪安)
   heal: bool,            // heal-type skill for the DEFAULT trigger (default: unit is a healer)
   mods: { …mod keys },   // buff while active (instant: only during the pending attack)
   flags: { …flags },

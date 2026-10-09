@@ -122,12 +122,14 @@ function lemuen(bb, chess, def) {
     // S1 重逢问候: ammo 5, attacks at attack@atk_scale × ATK on one extra target
     skchr_lemuen_1: {
       kind: 'ammo',
+      triggerExtraRange: true,
       ammo: Math.max(1, Math.floor(num(bb['attack@trigger_time'], 5))),
       attack: { atkScale: num(bb['attack@atk_scale'], 1) },
       targeting: { maxTargets: 2 },
     },
     skchr_lemuen_2: {
       kind: 'ammo',
+      triggerExtraRange: true,
       ammo: Math.max(1, Math.floor(num(bb['attack@trigger_time'], 6))),
       mods: { aspd: num(bb.attack_speed), atkPct: num(bb.atk) },
       onStart({ battle, unit }) { endAim(battle, unit); },
@@ -170,6 +172,7 @@ function lemuen(bb, chess, def) {
     // carries `hold`: the renderer keeps those reticles up while her skill runs (render/fx/locks.js).
     skill: {
       kind: 'ammo',
+      triggerExtraRange: true,
       ammo: Math.max(1, Math.floor(num(bb['attack@trigger_time'], 5))),
       attack: { noAttack: true },
       allyTargets: true,   // its locks take 白铁's 铁钳号 too (pickLock) — skills.js allyTargetsOk

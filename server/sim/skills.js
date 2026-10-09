@@ -43,6 +43,7 @@
 //   instant (onStart + optional one-shot attack override for the next attack), charges (= instant with charges),
 //   passive (always on from deployment, no SP), toggle (stays on until death once activated).
 // SkillSpec fields (all optional): kind, duration, ammo, spCost, initSp, charges, spType, trigger,
+//   triggerExtraRange (DEFAULT also accepts targetable enemies on extraRangeKeys at the next attack check: 蕾缪安 wanted),
 //   mods, flags, targeting {maxTargets, rangeGrid, priority, allInRange, rangeExtend, noRangeExtend (the range ignores
 //   the unit's 攻击距离), showOwnRange (rangeGrid only selects targets: the detail card keeps the unit's own range)},
 //   attack {dmgType, atkScale, splashRadius, splashScale, hits, projectile, maxTargets, dmgMul, onHit, heal…},
@@ -486,6 +487,10 @@ export class SkillRuntime {
       if (this.healSkill) return b.injuredAlliesInKeys(keys, u).length > 0;
       if (b.enemiesInKeys(keys, u, u.profile).length > 0 || this._allyTargetIn(keys)) return true;
     }
+    // A kit may let normal attacks target enemies beyond the initial grid (蕾缪安's wanted tiles). Such special
+    // targeting satisfies the basic strategy when that attack is due, without making the skill start mid-interval.
+    if (!this.healSkill && this.spec.triggerExtraRange && u.extraRangeKeys?.length &&
+      (b.enemiesInKeys(u.extraRangeKeys, u, u.profile).length > 0 || this._allyTargetIn(u.extraRangeKeys))) return true;
     // the enemies a unit blocks are always its targets (Battle.blockedTargets), in range or not — PRTS 卫戍协议/帮助
     // "敌人被近战干员自身阻挡" satisfies the target condition of the basic strategy (a ranged blocker too: user playtest #6)
     if (!this.healSkill && u.blocking.length && b.blockedTargets(u, u.profile).length > 0) return true;
