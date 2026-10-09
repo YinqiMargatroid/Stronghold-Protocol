@@ -35,9 +35,7 @@ export default {
         attack: {
           onHit({ battle, unit, target }) {
             if (!target || !target.alive || target.side !== 'enemy') return;
-            // Official footage in #418: the victim keeps its facing while Wild Mane S2 pushes it.
-            // [ASSUMED] The same presentation applies to its other targets and directions.
-            battle.push(target, force, { from: unit, dir: { x: unit.fwd[1], y: unit.fwd[0] }, keepFacing: true });
+            battle.push(target, force, { from: unit, dir: { x: unit.fwd[1], y: unit.fwd[0] } });
           },
         },
       },

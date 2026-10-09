@@ -610,7 +610,7 @@ test('1_19 野鬃: 夹枪冲锋 wider range, ATK +atk, pushes targets away; elit
   const e = h.enemies()[0];
   assert.ok(e.x >= 6.5, `pushed to x=${e.x}`);
   assert.ok(h.eventsOf('fx').some((f) => f[1] === 'displace' && f[4]?.keepFacing === true),
-    'Wild Mane S2 marks its displacement to preserve the victim\'s facing');
+    'Wild Mane S2 inherits the common push facing rule');
   done(h);
 
   const idb = 'chess_char_1_19_b', t = tal(idb);

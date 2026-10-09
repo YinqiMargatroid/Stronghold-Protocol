@@ -917,9 +917,10 @@ instance) and skip `'counter'` / `'reflect'` damage. When the guard trips, the l
 | `battle.grid` | `tile(r,c)` → `{glyph, key, height:'LOW'|'HIGH', build, pass:'ALL'|'FLY'|'NONE', terrain, special}`, `inRect`, `canStand(r,c,{ranged})` (every automatic placement: the 突袭 landing tile, tactical points, summon tiles — `build` is the effective deploy type, so never the 深水区 `tile_deepsea` (PRTS 深水区 地形信息 "拒绝部署（待补充）"; the 特制水上平台 of the inactive act1 m05 is not modelled, its tiles stay NONE here [ASSUMED]); no melee unit on a hard-blocked 射击台 / mound tile), `groundPassable`, `isLow`, `findPath(sr,sc,er,ec)`, `specialTiles('start'|'end'|…)`; `battle.rect`, `battle.stage` (normalised stage incl. `special` terrain params) |
 | `battle.data` | DataSource: `getChess(id, loadout?)`, `getEnemy(key)`, `getToken(id, ownerChessId, ownerLoadout?)`, `getStage(id)`, `getWave(id)` (normalised defs; raw record in `def.raw`; the per-battle loadout view, §12) |
 
-`keepFacing` is presentation metadata for Wild Mane S2's push (#418): when true, `displace` includes it in the `displace`
-fx so the client retains the enemy's pre-hit facing through its slide. It does not alter displacement or 失衡, and all
-other callers use the existing force-facing rendering.
+`keepFacing` is presentation metadata emitted by `push` by default: `displace` includes it in the fx so the client retains
+the enemy's pre-hit facing through its slide. Directional Wild Mane S2 (#418) and radial Mostima S3 have official footage;
+the same rendering for other push callers is [ASSUMED]. A caller can pass `keepFacing: false` for a documented exception.
+Pull and raw `displace` keep force-facing rendering. None of these flags alter displacement or 失衡.
 
 ---
 
