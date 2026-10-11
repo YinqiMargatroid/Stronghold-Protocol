@@ -6,9 +6,9 @@
 //     (config.economy.poolCopies[tier], measured identity overrides; co-op shared stock doubled). `left` is the
 //     signed capacity minus occupation; the public left() and shop sampling clamp a deficit to zero.
 //   * Owning a piece takes copies: a normal piece holds 1, an elite holds 3 (merge of 3 normals). Shop displays
-//     do NOT reserve copies; buying fails (SOLD_OUT) when left = 0.
+//     do NOT reserve copies; an already displayed operator may be bought after left reaches 0 (#498).
 //   * Pieces remember how many copies they hold (`piece.poolCopies`), so selling / elimination / temp wipes return
-//     exactly what was taken — chess granted by effects while the pool is empty (or hidden/banned chess) hold 0.
+//     exactly what was taken — ordinary overdraws have a signed deficit; hidden/banned chess hold 0.
 //   * Invariant: raw left ≤ cap and raw left + Σ held copies == cap. Mimic can exceed stock, but its copies still occupy it.
 //
 // Rolls: each chess slot draws ONE copy uniformly from all remaining copies of eligible chess with tier ≤ shop level

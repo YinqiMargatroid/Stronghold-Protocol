@@ -29,6 +29,42 @@ test('measured operator capacities and exceptions: co-op doubles shared stock, n
   assert.equal(solo.itemPoolCopies(PACK), 2); assert.equal(coop.itemPoolCopies(PACK), 2);
 });
 
+test('#498: already displayed operator cards remain purchasable after shared stock is exhausted', () => {
+  const h = makeMatch({ mode: 'coop', humans: 2, seed: 11, fake: true }).start().toPrep();
+  const m = h.m, a = h.ps('p_0'), b = h.ps('p_1');
+  const id = byName('溯光星源');
+  const cap = m.pool.cap(id);
+  assert.equal(cap, 10);
+  for (const ps of [a, b]) {
+    ps.funds = 10;
+    ps.shop.slots[0] = { kind: 'chess', id, basePrice: m.gd.chessPrice(id), sold: false, frozen: true };
+  }
+  for (let i = 0; i < cap; i++) assert.ok(b.acquireChess(id, { silent: true }));
+  assert.equal(m.pool.left(id), 0);
+  assert.equal(m.pool.roll(() => 0, { tier: 6, filter: (candidate) => candidate === id }), null,
+    'an exhausted operator is no longer eligible for a new shop draw');
+
+  const fundsA = a.funds, fundsB = b.funds;
+  const beforeB = new Set(b.allChess().map((piece) => piece.uid));
+  assert.ok(a.buy(0).ok);
+  assert.ok(b.buy(0).ok);
+  assert.equal(a.funds, fundsA - m.gd.chessPrice(id));
+  assert.equal(b.funds, fundsB - m.gd.chessPrice(id));
+  assert.equal(a.shop.slots[0].sold, true);
+  assert.equal(b.shop.slots[0].sold, true);
+  assert.equal(m.pool.entries.get(id).left, -2, 'both displayed cards count as owned copies');
+  checkInvariants(m);
+
+  const boughtA = a.allChess().find((piece) => piece.id === id);
+  const boughtB = b.allChess().find((piece) => !beforeB.has(piece.uid));
+  assert.ok(boughtA && boughtB);
+  assert.ok(a.sell(boughtA.uid).ok);
+  assert.ok(b.sell(boughtB.uid).ok);
+  assert.equal(m.pool.left(id), 0, 'the stock stays empty until ownership falls below the cap');
+  checkInvariants(m);
+  m.dispose();
+});
+
 test('shared equipment occupancy includes hand/equipped/elite, never displayed offers; destroying frees stock', () => {
   const h = makeMatch({ mode: 'coop', humans: 2, seed: 11, fake: true }).start().toPrep();
   const m = h.m, a = h.ps('p_0'), b = h.ps('p_1');

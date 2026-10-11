@@ -548,7 +548,9 @@ Any `choice:` handler whose EffectRef reuses its own key must guard like this (o
   toggle freezes every unsold slot until the next round start; a manual refresh rerolls everything (new slots stay
   frozen). Unfrozen slots are cleared at combat start. Slot positions are stable (frozen slots keep their index).
 * **Pool**: copies 12/14/18/16/8/5 (缪尔赛思 4); a normal piece holds 1 copy, an elite 3; displays never reserve copies;
-  selling, temp resolution and elimination return exactly what a piece holds (`left + held = cap` always).
+  an already displayed operator remains buyable after stock is exhausted, recording a signed deficit (#498). New rolls
+  exclude exhausted operators. Selling, temp resolution and elimination return exactly what a piece holds
+  (`raw left + held = cap` always). [ASSUMED] The same purchase rule applies to private DIY stock.
 * **自选编队 (0.2.0, `player/diy.js`; research 0.2.0 §2, the owner's decisions of 2026-10-05)**: a human's `seat.diy`
   picks (room.diy, checked again against the match's data and kits) are fixed for the match; bots field none [ASSUMED].
   The player's `ps.gd` is then a view of the match's GameData whose `chess(id)` of a slotted slot (normal and elite) is
@@ -927,13 +929,14 @@ choices are explicitly [ASSUMED]; DESIGN §28.15–16 records the source and val
 
 `SharedItemPool` derives equipment availability from current ownership across all players: ordinary 1, upgraded 2.
 Equips, merges and returns cannot lose reservations. Consumptions/destruction release ownership [ASSUMED removal
-interpretation]. Shop/reward displays reserve nothing; rejected exhausted purchases retain funds and offers.
+interpretation]. Equipment shop/reward displays reserve nothing; rejected exhausted equipment purchases retain funds
+and offers. Operator shop purchases follow the already-displayed-card rule above; equipment purchases do not overdraw.
 整备 upgrades the purchased item only when `left` still has the golden's second copy; otherwise the item stays
 normal and the charge remains.
 `m.public.sp.cards[].soldOut` disables duplicates when a preceding choice used the final copy; timer/bot choices
 use the same availability. Non-shop effect-only equipment is unlimited.
 
 Operator capacities use measured single-player exceptions and twice those counts in co-op; DIY remains private.
-`take(..., { overdraw: true })` records full occupation of a granted/promoted elite or a Mimic copy beyond capacity;
-normal takes remain bounded. Negative internal balance is a deficit, never negative available stock. Existing
+`take(..., { overdraw: true })` records full occupation of a granted/promoted elite, a Mimic copy or an already displayed
+operator purchase beyond capacity. New draws remain bounded. Negative internal balance is a deficit, never negative available stock. Existing
 item selection probabilities and explicit grant weights remain unchanged.

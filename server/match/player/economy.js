@@ -141,10 +141,8 @@ export class PlayerEconomy {
       const rec = this.gd.chess(slot.id);
       // a DIY slot sells only as this player's own 自选 piece (a slotted slot's record carries `diyFor`)
       if (!rec || (rec.isDiy && !rec.diyFor)) return fail(ERR.BAD_TARGET);
-      const base = this.gd.baseIdOf(slot.id);
-      const need = rec.isGolden ? this.gd.goldenCopies : 1;
-      const pool = this.poolOf(base);
-      if (pool.has(base) && pool.left(base) < need) return fail(ERR.SOLD_OUT);
+      // The offer was drawn while stock existed. A later purchase may overdraw it; new rolls still skip empty stock.
+      // [ASSUMED] A slotted DIY operator follows the same displayed-offer rule as a shared-pool operator.
       if (handFull) return fail(ERR.HAND_FULL);
       this.spend(price);
       slot.sold = true;

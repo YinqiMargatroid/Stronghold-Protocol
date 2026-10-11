@@ -103,10 +103,11 @@ test('shop slots per level (+ the item slot), buy prices by tier, SOLD_OUT, NO_F
   assert.equal(ps.hand[9].id, slot0.id, 'hand fills right→left');
   assert.deepEqual(m.handle('p_0', { t: 'g.buy', slot: 0 }), { error: ERR.SOLD_OUT });
   assert.deepEqual(m.handle('p_0', { t: 'g.buy', slot: 15 }).error, ERR.BAD_TARGET);
-  // a display is not a reservation: an empty pool makes the buy fail
+  // a display is not a reservation: an already shown operator remains buyable after stock empties
   const s1 = ps.shop.slots[1];
   const taken = m.pool.take(s1.id, 100);
-  assert.deepEqual(m.handle('p_0', { t: 'g.buy', slot: 1 }), { error: ERR.SOLD_OUT });
+  assert.deepEqual(m.handle('p_0', { t: 'g.buy', slot: 1 }), { ok: true });
+  assert.equal(m.pool.entries.get(s1.id).left, -1);
   m.pool.give(s1.id, taken);
   // full hand blocks buys
   const fillers = chessOfTier(3).filter((x) => m.pool.has(x) && x !== s1.id);
