@@ -4,7 +4,7 @@
 // Rules (the choices where DESIGN is silent are marked ▸):
 //   * Rooms are keyed by 4-letter codes from an unambiguous alphabet (no I/O, letters only). Join codes are
 //     case-insensitive.
-//   * 'solo' rooms hold exactly one human and never bots. 'coop' rooms have 4 seats (humans + AI bots).
+//   * 'solo' rooms hold exactly one human and never bots. 'coop' rooms have 6 seats (humans + AI bots).
 //     Humans and bots take the lowest free seat index; seat indexes never compact.
 //   * ▸ Being in a LOBBY room and sending room.create / room.join implicitly leaves it. While your room is
 //     in a match, create/join of another room fails with ROOM_STARTED (send g.leave or room.leave first).
@@ -87,7 +87,7 @@
 //     exactly what the server accepts.
 //   * Spectator seats (community report #26, owner's decision 2026-10-04 — a remake feature, the official room has none):
 //     room.spectate { code } takes one of a co-op room's MAX_SPECTATORS (2) spectator seats, in its lobby or while its
-//     match runs (▸ solo rooms: ROOM_FULL). A spectator is not a player: never in `seats`, never counted for the 1–4 players
+//     match runs (▸ solo rooms: ROOM_FULL). A spectator is not a player: never in `seats`, never counted for the 1–6 players
 //     or the start gate, never host, never keeps a room alive (a room whose last human leaves closes with room.closed
 //     {empty} for its spectators). It receives room.state (`spectators: [{ playerId, name, connected }]`) and every match
 //     broadcast (m.public, m.ticker, m.emote, b.pool — public data); the match registers it (opts.spectators /

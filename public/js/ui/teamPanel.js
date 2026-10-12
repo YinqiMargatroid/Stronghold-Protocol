@@ -155,7 +155,7 @@ export function TeamPanel({ pub, myId, watching, bubbles, onWatch, compact = fal
     noteAsked(p);
     onWatch(p);
   };
-  return html`<aside class=${cx('team', compact && 'team--compact')} aria-label=${t('同盟成员')}>
+  return html`<aside class=${cx('team', compact && 'team--compact', players.length >= 6 && 'team--large')} aria-label=${t('同盟成员')}>
     ${players.map((p) => {
       const self = p.playerId === myId;
       const status = p.alive === false ? 'dead' : p.status;

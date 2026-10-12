@@ -19,6 +19,8 @@
 // the promotion reward and random grants pass diyStockEntries (the roll's own tier, DESIGN §30.23). Weighted by its
 // copies like any chess, drawn by that player only.
 
+import { isMilestoneBeacon } from './beaconSupply.js';
+
 /**
  * Per-match disabled bond set D and banned chess (research 01 A2): D = uniform sample of `core` core bonds and `addon`
  * add-on bonds among weight > 0 bonds that are active in the mode. A visible chess is banned iff every one of its
@@ -197,8 +199,8 @@ export class SharedItemPool {
     let count = 0;
     const see = p => {
       if (!p) return;
-      if (p.kind === 'item' && this.gd.baseIdOf(p.id) === base) count += this.need(p.id);
-      for (const item of p.items || []) if (this.gd.baseIdOf(item.id) === base) count += this.need(item.id);
+      if (p.kind === 'item' && !isMilestoneBeacon(p) && this.gd.baseIdOf(p.id) === base) count += this.need(p.id);
+      for (const item of p.items || []) if (!isMilestoneBeacon(item) && this.gd.baseIdOf(item.id) === base) count += this.need(item.id);
     };
     for (const ps of this.players()) {
       for (const p of ps.hand) see(p);

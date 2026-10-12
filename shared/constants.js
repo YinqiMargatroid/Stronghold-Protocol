@@ -10,10 +10,10 @@ export const APP_VERSION = '0.2.5';
  * tools/package.mjs refuses to build a release zip from it without --allow-dev. */
 export const DEV_BUILD = /-dev$/.test(APP_VERSION);
 
-export const MAX_SEATS = 4;
+export const MAX_SEATS = 6;
 /**
  * Spectator seats of a co-op room (community report #26, owner's decision 2026-10-04) — a remake feature: the official
- * room has 1–4 players and no spectator seat (there only eliminated players and 联防 bystanders watch, research 09 §3.1).
+ * room has 1–6 players and no spectator seat (there only eliminated players and 联防 bystanders watch, research 09 §3.1).
  * A spectator never counts as a player, may not act, and watches like an eliminated player (server/lobby.js spectate,
  * server/match/match/watch.js addSpectator).
  */

@@ -90,11 +90,13 @@ export class GameData {
   /**
    * @param {Readonly<Record<string, any>>} data server/data.js getData() (may be partial)
    * @param {string} modeId e.g. 'mode_multi_hard'
+   * @param {number} [startingPlayerCount] occupied seats when the match starts, including AI
    */
-  constructor(data, modeId) {
+  constructor(data, modeId, startingPlayerCount = 1) {
     this.raw = data && typeof data === 'object' ? data : {};
     this.config = getConfig(this.raw) || {};
     this.modeId = modeId;
+    this.startingPlayerCount = startingPlayerCount;
     this.mode = getMode(modeId, this.raw) || {};
     this.economy = this.config.economy && typeof this.config.economy === 'object' ? this.config.economy : {};
     const chess = this.raw.chess && typeof this.raw.chess === 'object' ? this.raw.chess : {};
@@ -166,7 +168,11 @@ export class GameData {
    * @param {number} [aliveCount]
    */
   bossPoolShare(aliveCount) {
-    return bossPoolShareOf(this.mode.bossHpScale, this.config.bossHpScale, this.isSolo, aliveCount);
+    // Rhine's six-seat rule doubles the equivalent four-seat pool, even after eliminations.
+    const six = !this.isSolo && this.startingPlayerCount === 6;
+    const n = Number(aliveCount);
+    const count = six ? (Number.isFinite(n) && n >= 1 ? Math.min(4, n) : 4) : aliveCount;
+    return bossPoolShareOf(this.mode.bossHpScale, this.config.bossHpScale, this.isSolo, count) * (six ? 2 : 1);
   }
 
   /** config.titles with the tuning overrides (stat / rule per title id) merged in. */
@@ -487,8 +493,10 @@ export class GameData {
   bans(difficulty) {
     const b = this.config.bans && this.config.bans[difficulty];
     const d = DEFAULTS.bans[difficulty] || { core: 0, addon: 0 };
-    if (!b || typeof b !== 'object') return { ...d };
-    return { core: Number.isInteger(b.core) && b.core >= 0 ? b.core : d.core, addon: Number.isInteger(b.addon) && b.addon >= 0 ? b.addon : d.addon };
+    const core = b && Number.isInteger(b.core) && b.core >= 0 ? b.core : d.core;
+    const addon = b && Number.isInteger(b.addon) && b.addon >= 0 ? b.addon : d.addon;
+    const reduction = this.isSolo || difficulty === 'TRAINING' ? 0 : this.startingPlayerCount === 6 ? 2 : this.startingPlayerCount === 5 ? 1 : 0;
+    return { core: Math.max(0, core - reduction), addon };
   }
   get bandDraft() {
     const b = this.config.bandDraft && typeof this.config.bandDraft === 'object' ? this.config.bandDraft : {};

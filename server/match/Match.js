@@ -15,7 +15,7 @@
 //   opts.aiPicksLast boolean (optional)         the co-op room option 「AI 队友最后选择」 (room.setAiPicksLast, GitHub #338):
 //                                              the strategy and 机变 drafts put every human seat before every AI seat
 //                                              (MatchPhases.humansFirst); only `true` turns it on; ignored in solo
-//   opts.seats       Array<{ seat: 0..3, playerId: string, name: string, isBot: boolean, connected: boolean,
+//   opts.seats       Array<{ seat: 0..5, playerId: string, name: string, isBot: boolean, connected: boolean,
 //                            loadout?: { [baseChessId]: { skill: index, module: uniEquipId|'none'|null } } | null,
 //                            ops?: { [charId]: { potential: 1–6, cultivate: 0–3 } } | null,
 //                            notOwned?: string[] | null,
@@ -242,7 +242,16 @@ export class Match {
     this.broadcastFn = opts.broadcast;
     this.onEndFn = opts.onEnd;
     this.data = opts.data && typeof opts.data === 'object' ? opts.data : {};
-    this.gd = new GameData(this.data, this.modeId);
+    const seen = new Set();
+    const startingSeats = opts.seats.filter((s) => {
+      if (!s || typeof s.playerId !== 'string' || seen.has(s.playerId)) return false;
+      seen.add(s.playerId);
+      return true;
+    });
+    if (!startingSeats.length) throw new TypeError('Match: seats required');
+    // The starting roster, including AI, fixes the five/six-player rules for the entire match.
+    this.startingPlayerCount = startingSeats.length;
+    this.gd = new GameData(this.data, this.modeId, this.startingPlayerCount);
     if (!this.difficulty) this.difficulty = this.gd.difficulty;
     this.isSolo = this.mode === 'solo' || this.gd.isSolo;
     /** 「AI 队友最后选择」 (opts.aiPicksLast, GitHub #338): humans draft before AI seats (MatchPhases.humansFirst) */
@@ -298,13 +307,7 @@ export class Match {
 
     /** @type {Map<string, PlayerState>} */
     this.players = new Map();
-    const seen = new Set();
-    for (const s of opts.seats) {
-      if (!s || typeof s.playerId !== 'string' || seen.has(s.playerId)) continue;
-      seen.add(s.playerId);
-      this.players.set(s.playerId, new PlayerState(this, s));
-    }
-    if (!this.players.size) throw new TypeError('Match: seats required');
+    for (const s of startingSeats) this.players.set(s.playerId, new PlayerState(this, s));
     this.order = [...this.players.values()].sort((a, b) => a.seat - b.seat);
     /**
      * Spectator seats (opts.spectators / addSpectator): playerId → a stand-in every watch path treats like an eliminated

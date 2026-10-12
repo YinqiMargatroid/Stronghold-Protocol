@@ -30,6 +30,7 @@ import { data } from '../data.js';
 import { audio } from '../audio.js';
 import { modeOffBonds, bandOffBonds, bandOffLine } from '../ui/gameLogic.js';
 import { t, tParts, tName } from '../../../shared/i18n.js';
+import { MAX_SEATS } from '../../../shared/constants.js';
 
 const cx = (...p) => p.flat().filter(Boolean).join(' ');
 
@@ -293,7 +294,7 @@ export function BandDraftScreen() {
             <span class="dband__name">${b.name}</span>
             <span class="dband__lp num"><i></i>${b.totalHp}</span>
             <${BandOffTag} names=${offNames} />
-            ${who.length ? html`<span class="dband__who">${who.slice(0, 4).map((p) => html`<${PlayerAvatar} key=${p.playerId} player=${p} size="sm" />`)}</span>` : null}
+            ${who.length ? html`<span class="dband__who">${who.slice(0, MAX_SEATS).map((p) => html`<${PlayerAvatar} key=${p.playerId} player=${p} size="sm" />`)}</span>` : null}
             ${isTaken ? html`<span class="dband__taken">${t('队友已选')}</span>` : null}
           </button>`;
         })}

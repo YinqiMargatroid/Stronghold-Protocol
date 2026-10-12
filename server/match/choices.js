@@ -145,6 +145,7 @@ export function generateDraft(gd, rng, round, { stageId = null, bondAvailable = 
   let cards = buildCards(gd, rng, family, n, sch, opts);
   if (!cards.length && family !== 'supply') { family = 'supply'; cards = buildCards(gd, rng, family, n, sch, opts); }
   if (!cards.length) return null;
+  if (family === 'bounty' && !gd.isSolo && gd.startingPlayerCount >= 5) cards.push(...largeRoomBountyCards(gd, rng, cards, sch, round));
   cards.forEach((c, i) => { c.idx = i; c.family = family; });
   const famInfo = gd.choices.families && gd.choices.families[family];
   const events = sch.events && Array.isArray(sch.events[family]) ? sch.events[family] : [];
@@ -320,6 +321,26 @@ function bountyDraftCards(gd, rng, n, sch, round) {
   const taken = new Set(out);
   if (out.length < n) out.push(...drawDistinct(rng, eligible, n - out.length, taken));
   return rng.shuffle(out).slice(0, n).map((c) => bountyCard(gd, c));
+}
+
+/** Five/six-seat rooms append three distinct existing kill bounties: tier I / II / II, paying 1 / 2 / 2. */
+function largeRoomBountyCards(gd, rng, offered, sch, round) {
+  const kind = typeof sch.bountyDraft === 'string' ? sch.bountyDraft : bountyDraftKind(round);
+  const all = Array.isArray(gd.choices.cards?.bounty) ? gd.choices.cards.bounty : [];
+  const taken = new Set(offered.map((c) => c.id));
+  const valid = (c, tier) => c && !taken.has(c.effectId) && c.payout === 'kill' && c.tier === tier
+    && c.coin === tier && !isMultiRoundBounty(c) && !!gd.enemy(c.enemyKey);
+  const out = [];
+  for (const tier of [1, 2, 2]) {
+    let pool = all.filter((c) => valid(c, tier) && draftBounty(c, kind));
+    // The round-nine boss list may contain no unused paying tier-I card.
+    if (!pool.length && kind === 'boss' && tier === 1) pool = all.filter((c) => valid(c, tier) && draftBounty(c, 'hunter') && bountyBattles(c) === 1);
+    const chosen = rng.pick(pool);
+    if (!chosen) continue;
+    taken.add(chosen.effectId);
+    out.push(bountyCard(gd, chosen));
+  }
+  return out;
 }
 
 /**

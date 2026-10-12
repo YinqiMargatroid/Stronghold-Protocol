@@ -8,6 +8,7 @@
 import { pieceDir, parseDir, mergeTile } from '../board.js';
 import { MAX_OFFER_SLOTS } from './common.js';
 import { onMerge } from '../botEmotes.js';
+import { milestoneBeaconRound } from '../beaconSupply.js';
 
 export class PlayerAcquire {
   /** Normal copies of a base chess currently owned (board/hand/temp). */
@@ -291,14 +292,16 @@ export class PlayerAcquire {
   acquireItem(itemId, { source = 'grant', toTemp = false, silent = false, deferMerge = false, requirePool = true } = {}) {
     const rec = this.gd.item(itemId);
     if (!rec) return null;
+    const supplyRound = milestoneBeaconRound(this.m, itemId, source);
     // Only the fixed operator-gift families can overdraw. Several unrelated strategy grants also pass
     // requirePool:false; they must retain their stock limit (for example commercial packaging).
     const unlimitedGift = !requirePool && this.gd.isUnlimitedGiftItem(itemId);
-    if (!unlimitedGift && !this.m.itemPool.canGain(itemId)) {
+    if (!supplyRound && !unlimitedGift && !this.m.itemPool.canGain(itemId)) {
       this.m.toast(this, 'warn', '装备库存不足，未获得该装备');
       return null;
     }
     let piece = this.newPiece('item', itemId);
+    if (supplyRound) piece.meta.sixPlayerBeaconRound = supplyRound;
     // A prep-end grant may sit beside an identical copy until the next prep. The invariant counts only copies
     // without this mark, so the fight that is about to start is not reported as a missed merge.
     if (deferMerge) piece.deferMerge = true;

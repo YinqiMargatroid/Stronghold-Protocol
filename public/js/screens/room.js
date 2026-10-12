@@ -28,7 +28,7 @@ import { difficultyInfo } from './lobby.js';
 import { t, tc } from '../../../shared/i18n.js';
 
 /**
- * Seats padded to the room's capacity (co-op 4, solo 1), each null or a seat record.
+ * Seats padded to the room's capacity (co-op 6, solo 1), each null or a seat record.
  * @param {any} room room.state payload
  * @returns {(null | {seat:number, playerId:any, name:string, isBot:boolean, ready:boolean, connected:boolean})[]}
  */
@@ -321,7 +321,7 @@ export function RoomScreen() {
       </div>
     </header>
 
-    <main class=${`seats${coop ? '' : ' seats--solo'}`}>
+    <main class=${`seats${coop ? ' seats--six' : ' seats--solo'}`}>
       ${facts.seats.map((s, i) => html`<${SeatCard} key=${s ? `p${s.playerId}` : `e${i}`} seat=${s} index=${i} room=${room} facts=${facts}
         myId=${me.playerId} busy=${busy} onAddBot=${addBot} onRemoveBot=${removeBot} onKick=${kick} />`)}
       ${coop ? null : html`<aside class="solo-brief brackets">

@@ -1,5 +1,5 @@
 /* ==========================================================================================
-   screens/room.css — room/waiting screen: invite key, 4 seat cards, bottom action bar.
+   screens/room.css — room/waiting screen: invite key, up to 6 seat cards, bottom action bar.
    ========================================================================================== */
 
 .room-screen .topbar { height: 1.36rem; }
@@ -49,6 +49,26 @@
   padding: .3rem .6rem .24rem;
 }
 .seats--solo { grid-template-columns: 3.8rem minmax(0, 6.4rem); }
+.seats--six {
+  grid-template-columns: repeat(3, minmax(0, 3.8rem));
+  grid-template-rows: repeat(2, minmax(0, 2.8rem));
+  gap: .16rem;
+  overflow: auto;
+}
+.seats--six .seat { gap: .03rem; padding: .08rem .1rem; }
+.seats--six .seat__art { gap: .03rem; }
+.seats--six .seat__art .avatar { --av: 1rem; }
+.seats--six .seat__bot-label { font-size: calc(.12 * var(--t)); line-height: 1.25; }
+.seats--six .seat__head { gap: .05rem; }
+.seats--six .seat__head > .micro { display: none; }
+.seats--six .seat__name { font-size: calc(.2 * var(--t)); }
+.seats--six .seat__foot { margin-top: .02rem; padding-top: .04rem; min-height: .36rem; }
+.seats--six .seat__state { font-size: calc(.15 * var(--t)); }
+.seats--six .seat__radar { width: .7rem; height: .7rem; }
+.seats--six .seat__wait { font-size: calc(.16 * var(--t)); }
+@media (max-width: 767px) {
+  .seats--six { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .14rem; padding: .18rem .3rem; }
+}
 
 .seat {
   --bk-c: var(--line-3);

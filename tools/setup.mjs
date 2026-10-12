@@ -303,6 +303,7 @@ export function clientCandidates() {
       ['Program Files (x86)', 'Hypergryph Launcher', 'games', 'Arknights'],
       ['Hypergryph Launcher', 'games', 'Arknights'],
       ['Games', 'Hypergryph Launcher', 'games', 'Arknights'],
+      ['Games', 'Hypergryph Launcher', 'games', 'Arknights Game'],
       ['Program Files', 'Hypergryph', 'Arknights'],
       ['Arknights'],
     ];
