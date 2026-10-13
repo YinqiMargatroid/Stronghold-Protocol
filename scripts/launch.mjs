@@ -3,7 +3,7 @@
 // scripts/start-windows.ps1 and scripts/start.sh (docs/DEPLOY.md).
 //
 //   node scripts/launch.mjs [--port 3000] [--host ::] [--no-open] [--no-setup] [setup options…]
-//   --no-round10-beacon disables the six-seat R10 fixed 信标 supply; --round10-beacon enables it (the default).
+//   --no-round10-beacon disables the five/six-seat R10 fixed 信标 supply; --round10-beacon enables it (the default).
 //
 //   1. If our server already answers on the port, just open the browser (double-clicking twice is harmless).
 //   2. An update package extracted over the folder (UPDATE.json) is finished (server/update.js; the server does it too,

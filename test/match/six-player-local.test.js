@@ -7,8 +7,10 @@ import { generateDraft } from '../../server/match/choices.js';
 import { createRng } from '../../server/sim/rng.js';
 import { buildBattleSpec, compactResult, createBattleFromSpec, fitResult } from '../../server/sim/spec.js';
 import { validateClientResult } from '../../server/match/fields.js';
+import { attachAudit } from '../../server/match/audit.js';
 import { normalizeSeats } from '../../public/js/screens/room.js';
 import { parseArgs as parseLaunchArgs } from '../../scripts/launch.mjs';
+import { normalizeSp } from '../../public/js/ui/gameLogic/draft.js';
 import { DATA, give, legalTileFor, makeMatch } from './harness.js';
 
 const BEACON = 'chess_item_5_04_e_a';
@@ -104,22 +106,66 @@ test('five and six player bounty drafts offer nine distinct cards with I/II/II s
   }
 });
 
-test('six-seat R10 beacon supply is independent of item shop stock and granted once per survivor', () => {
-  const h = makeMatch({ humans: 6, difficulty: 'HARD', fake: true, seed: 8643 }).start();
+test('nine bounty cards reach the client and the ninth card can be selected', () => {
+  for (const count of [5, 6]) {
+    const h = makeMatch({ humans: count, difficulty: 'HARD', fake: true, seed: 8643 }).start();
+    try {
+      h.toPrep(1);
+      const audit = attachAudit(h.m, { invariants: false });
+      h.m.round = 3; // HARD R3 is a bounty draft.
+      h.m.enterSpDraft();
+      const pub = h.m.publicView();
+      assert.equal(pub.sp.family, 'bounty');
+      assert.equal(pub.sp.cards.length, 9);
+      const displayed = normalizeSp(pub.sp, pub.players);
+      assert.equal(displayed.cards.length, 9);
+      assert.equal(displayed.cards[8].id, pub.sp.cards[8].id);
+      const picker = h.m.spTurn();
+      assert.equal(validateC2S({ t: 'g.choice', idx: 8 }), null, 'the network accepts the ninth card');
+      assert.notEqual(validateC2S({ t: 'g.choice', idx: 9 }), null);
+      assert.deepEqual(h.m.handle(picker, { t: 'g.choice', idx: 8 }), { ok: true });
+      const after = normalizeSp(h.m.publicView().sp, pub.players);
+      assert.equal(after.cards[8].takenBy, picker);
+      assert.ok(h.drive(() => h.m.phase === PHASE.PREP && h.m.round === 3, { ready: false }));
+      assert.deepEqual(audit.violations, []);
+      h.invariants();
+    } finally { h.m.dispose(); }
+  }
+});
+
+test('five/six-seat R10 beacon supply defaults on, leaves shop stock alone and is granted once', () => {
+  for (const count of [4, 5, 6]) {
+    const h = makeMatch({ humans: count, difficulty: 'HARD', fake: true, seed: 8643 }).start();
+    try {
+      assert.equal(h.m.round10Beacon, true);
+      h.toPrep(1);
+      const shopCap = h.m.itemPool.cap(BEACON);
+      const ps = h.ps('p_0');
+      for (let i = 0; i < shopCap; i++) assert.ok(ps.acquireItem(BEACON));
+      assert.equal(h.m.itemPool.left(BEACON), 0);
+      h.m.startRound(10);
+      for (const player of h.m.order) assert.equal(beacons(player).filter((p) => p.meta.sixPlayerBeaconRound === 10).length, count >= 5 ? 1 : 0);
+      assert.equal(h.m.itemPool.left(BEACON), 0);
+      h.m.startRound(10);
+      for (const player of h.m.order) assert.equal(beacons(player).filter((p) => p.meta.sixPlayerBeaconRound === 10).length, count >= 5 ? 1 : 0);
+      h.m.startRound(12);
+      h.m.startRound(14);
+      for (const player of h.m.order) assert.deepEqual(beacons(player).filter((p) => p.meta.sixPlayerBeaconRound).map((p) => p.meta.sixPlayerBeaconRound), count >= 5 ? [10] : []);
+      h.invariants();
+    } finally { h.m.dispose(); }
+  }
+});
+
+test('an AI opening seat keeps the five-seat beacon rule after elimination', () => {
+  const h = makeMatch({ humans: 4, bots: 1, difficulty: 'HARD', fake: true, seed: 8643 }).start();
   try {
     h.toPrep(1);
-    const shopCap = h.m.itemPool.cap(BEACON);
-    const ps = h.ps('p_0');
-    for (let i = 0; i < shopCap; i++) assert.ok(ps.acquireItem(BEACON));
-    assert.equal(h.m.itemPool.left(BEACON), 0);
+    assert.equal(h.m.startingPlayerCount, 5);
+    h.ps('ai_0').eliminate(1);
+    assert.equal(h.m.alivePlayers().length, 4);
     h.m.startRound(10);
-    for (const player of h.m.order) assert.equal(beacons(player).filter((p) => p.meta.sixPlayerBeaconRound === 10).length, 1);
-    assert.equal(h.m.itemPool.left(BEACON), 0);
-    h.m.startRound(10);
-    for (const player of h.m.order) assert.equal(beacons(player).filter((p) => p.meta.sixPlayerBeaconRound === 10).length, 1);
-    h.m.startRound(12);
-    h.m.startRound(14);
-    for (const player of h.m.order) assert.deepEqual(beacons(player).filter((p) => p.meta.sixPlayerBeaconRound).map((p) => p.meta.sixPlayerBeaconRound), [10]);
+    for (const ps of h.m.alivePlayers()) assert.equal(beacons(ps).filter((p) => p.meta.sixPlayerBeaconRound === 10).length, 1);
+    assert.equal(beacons(h.ps('ai_0')).length, 0);
     h.invariants();
   } finally { h.m.dispose(); }
 });
@@ -129,7 +175,7 @@ test('disabling the R10 supply leaves ordinary beacons and shop stock unchanged'
   process.env.SP_SIX_PLAYER_ROUND10_BEACON = '0';
   let h;
   try {
-    h = makeMatch({ humans: 6, difficulty: 'HARD', fake: true, seed: 8643 }).start();
+    h = makeMatch({ humans: 5, difficulty: 'HARD', fake: true, seed: 8643 }).start();
     assert.equal(h.m.round10Beacon, false);
     h.toPrep(1);
     const player = h.ps('p_0');

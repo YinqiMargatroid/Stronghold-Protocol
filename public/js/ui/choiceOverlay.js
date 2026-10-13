@@ -1,6 +1,6 @@
 // 机变 draft overlay (research 06 §4.4 / §11.5): family title | description, "倒计时结束后仍未选定将自动分配",
 // whose turn ("当前轮到你决策" / "{name} 正在决策…") with countdown, pick order with ✓ / ⌛ / … / door,
-// and a 3×2 grid (solo: 3 cards) of cards in the official layout (the official 悬赏 / 机密商店 / 战术 screenshots): a
+// and a 3×2 grid (solo: 3 cards; large-room bounty: 3×3, scrollable on short screens) of cards in the official layout (the official 悬赏 / 机密商店 / 战术 screenshots): a
 // framed icon at the top-left with the bold name beside it (tags under the name), the effect text across the card under
 // both, left-aligned; the tier chip on the icon's corner and the taker's round avatar alone at the top-right (their
 // name is its tooltip and part of the card's accessible name; a taken card's name wraps before it). The effect text
@@ -210,7 +210,7 @@ export function ChoiceView({ pub, sp, myId, solo, personal = false, busyIdx = nu
           </div>`;
         })}
       </div>` : null}
-      <div class=${cx('spov__grid', sp.cards.length <= 3 && 'spov__grid--3')}>
+      <div class=${cx('spov__grid', sp.cards.length <= 3 && 'spov__grid--3', sp.cards.length > 6 && 'spov__grid--many')}>
         ${sp.cards.map((card) => {
           const r = resolveSpCard(card, sp.family);
           const taker = card.takenBy ? players.get(card.takenBy) : null;

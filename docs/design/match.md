@@ -2,7 +2,7 @@
 
 Part of [DESIGN.md](../DESIGN.md) (the index; section numbers are global).
 
-This isolated build extends the inherited match rules with [six-player-only rules](../LOCAL-SIX-PLAYER.md); the starting roster fixes the BAN and boss modifiers for the full match. Six-seat matches grant a fixed 信标 only at the start of round 10.
+This isolated build extends the inherited match rules with [community six-player rules](../LOCAL-SIX-PLAYER.md); the starting roster fixes the BAN and boss modifiers for the full match. Five- and six-seat matches grant a fixed 信标 only at the start of round 10. Their bounty drafts show nine cards, including three extra kill bounties.
 
 ## 6. Match & meta (server/match)
 

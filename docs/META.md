@@ -5,7 +5,7 @@ the **UI owner** consuming `m.public` / `m.private` / `m.result`, and anyone dri
 Normative contracts stay in DESIGN.md §6 and §8 ([design/match.md](design/match.md),
 [design/network.md](design/network.md)); this file documents the implementation and every assumption it makes.
 
-For this isolated 0.2.5 six-player checkout, [LOCAL-SIX-PLAYER.md](LOCAL-SIX-PLAYER.md) specifies the starting-roster BAN adjustment, unchanged shared pool multiplier, nine-card bounty draft, doubled six-seat boss pool, and optional (default-on) round-10-only 信标 supply. `beaconSupply.js` identifies that fixed reward, and `SharedItemPool` excludes it from shop stock.
+For this isolated 0.2.5 six-player checkout, [LOCAL-SIX-PLAYER.md](LOCAL-SIX-PLAYER.md) specifies the starting-roster BAN adjustment, unchanged shared pool multiplier, nine-card bounty draft for five/six-seat rooms, doubled six-seat boss pool, and optional (default-on for five/six-seat starts) round-10-only 信标 supply. `beaconSupply.js` identifies that fixed reward, and `SharedItemPool` excludes it from shop stock.
 
 ```
 server/match/
@@ -803,6 +803,7 @@ eliminated (nobody can watch them; the result screen reads `m.result`'s own bond
 payout?, rounds?, enemyKey?, count?, price?, team?, tacticKind? }], order, turn, picks:{pid: idx}, taken:{idx: pid}, untimed }`
 (SP_DRAFT), `teamLp` / `bossHp {hp,max}` (Final Assault on), `overtimeAt` (最终攻势 / 隐秘核心: ms epoch when the
 overtime drain starts; `deadline` = the level's 120 s countdown), `unite { helpers, leakers }` (UNITE).
+In this six-player fork, a bounty draft in a match that started with five or six seats can send nine `sp.cards`; `g.choice.idx` accepts 0–8 on the wire, while `Match.pickCard` still checks the current offer's actual length. Other co-op draft families retain six cards and the personal 教鞭 choice retains three.
 `players[].status`: INFO_CHECK ready/deciding · drafts ready (picked) / deciding (their turn) / acting (waiting) ·
 PREP ready/acting · COMBAT/boss combat/done · UNITE helping/done · others done · `left` / `dead` override.
 

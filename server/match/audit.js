@@ -24,7 +24,7 @@
 //   combat start  nothing overdue in temp, everyone ready, funds lost (carry bands excepted), unfrozen shop cleared,
 //                 one field per alive player
 //   drafts        every seat holds an allowed band with LP = totalHp; 机变: one card per alive player, card ↔ picker
-//                 maps consistent, 6 (co-op) / 3 (solo) cards
+//                 maps consistent, 9 (five/six-seat bounty) / 6 (other co-op) / 3 (solo) cards
 //   联防          decided after the COMBAT_END pause from the players still in: runs iff co-op with ≥ 1 leaker and
 //                 ≥ 1 perfect player; helpers = unite.js helperOrder (PRTS: units > active bond > layers > standing
 //                 units > seat, research 08 §5); leakers = players with counted leaks
@@ -346,7 +346,7 @@ export function attachAudit(m, { invariants = true, limit = 200 } = {}) {
     const s = m.sp;
     if (m.phase === PHASE.SP_DRAFT && s) check('sp draft', () => {
       const alive = m.alivePlayers().map((p) => p.playerId);
-      const want = m.isSolo ? 3 : 6;
+      const want = m.isSolo ? 3 : s.family === 'bounty' && m.startingPlayerCount >= 5 ? 9 : 6;
       if (s.cards.length > want) fail(`${s.cards.length} 机变 cards (max ${want})`);
       if (s.order.length !== alive.length) fail(`机变 order ${s.order.length} for ${alive.length} alive`);
       for (const pid of alive) {

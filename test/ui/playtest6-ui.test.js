@@ -94,6 +94,19 @@ describe('6: 机变 cards (道具补给 / 机密商店 / 悬赏 / 战术) show t
     }
   });
 
+  test('a nine-card bounty draft renders its last card as a selectable button', () => {
+    const src = data.get('choices').cards.bounty.filter((c) => c.draft !== false).slice(0, 9);
+    const sp = serverSp('bounty', src.map((c) => ({ kind: 'bounty', id: c.effectId, name: c.name, desc: c.desc, enemyKey: c.enemyKey, coin: c.coin })));
+    const taps = [];
+    const nodes = [...walk(ChoiceView({ pub: { players, deadline: 0 }, sp, myId: 'me', solo: false, onTap: (idx) => taps.push(idx) }))];
+    assert.ok(nodes.some((n) => hasClass(n, 'spov__grid--many')));
+    const cards = nodes.filter((n) => hasClass(n, 'spcard'));
+    assert.equal(cards.length, 9);
+    assert.equal(cards[8].props.disabled, false);
+    cards[8].props.onClick();
+    assert.deepEqual(taps, [8]);
+  });
+
   test('cardText: the data\'s rich text only while it says what the server says; a server-side wording wins', () => {
     const rich = '为自身<@ba.vup>下场作战</>添加1只A，将其击倒者获得<@ba.vup>2</>资金';
     assert.equal(cardText({ desc: '为自身下场作战添加1只A，将其击倒者获得2资金' }, rich), rich);

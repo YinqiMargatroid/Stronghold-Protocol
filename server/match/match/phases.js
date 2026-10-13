@@ -10,7 +10,7 @@ import { pairPlayers } from '../finalAssault.js';
 import { createRng, deriveSeed } from '../../sim/rng.js';
 import { botPickBand } from '../bot.js';
 import { OK, fail, DELAYS, BAND_TURN_SECONDS } from './common.js';
-import { ROUND_BEACON_ITEM, SIX_PLAYER_BEACON_ROUNDS } from '../beaconSupply.js';
+import { ROUND_BEACON_ITEM, fixedBeaconSupplyRound } from '../beaconSupply.js';
 
 export class MatchPhases {
   enterInfoCheck() {
@@ -282,7 +282,7 @@ export class MatchPhases {
       if (ps.alive) continue;
       try { this.dispatcher.dispatchEliminated(ps, 'onRoundStart', { round: r }); } catch (e) { this.reportError('dispatch onRoundStart (eliminated)', e); }
     }
-    if (this.round10Beacon && !this.isSolo && this.startingPlayerCount === 6 && SIX_PLAYER_BEACON_ROUNDS.has(r)) {
+    if (fixedBeaconSupplyRound(this, r)) {
       for (const ps of alive) {
         // Count a supply only once even if a client reconnects or the round entry is repeated.
         const key = `sixPlayerBeacon:${r}`;
