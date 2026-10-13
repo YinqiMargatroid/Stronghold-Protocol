@@ -19,6 +19,7 @@ const KEPT = [...PLAYER_NPM_SCRIPTS, 'dev'];
 test('release tags drop a trailing -dev and keep an already released version', () => {
   assert.equal(releaseTag('0.2.5-dev'), 'v0.2.5');
   assert.equal(releaseTag('0.2.5'), 'v0.2.5-six-player.3');
+  assert.equal(releaseTag('0.2.6'), 'v0.2.6-six-player.1');
   assert.equal(releaseTag('0.2.4'), 'v0.2.4');
   assert.equal(releaseTag('9.9.9'), 'v9.9.9');
 });

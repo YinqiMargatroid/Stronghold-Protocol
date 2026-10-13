@@ -5,7 +5,7 @@ the **UI owner** consuming `m.public` / `m.private` / `m.result`, and anyone dri
 Normative contracts stay in DESIGN.md §6 and §8 ([design/match.md](design/match.md),
 [design/network.md](design/network.md)); this file documents the implementation and every assumption it makes.
 
-For this isolated 0.2.5 six-player checkout, [LOCAL-SIX-PLAYER.md](LOCAL-SIX-PLAYER.md) specifies the starting-roster BAN adjustment, unchanged shared pool multiplier, nine-card bounty draft for five/six-seat rooms, doubled six-seat boss pool, and optional (default-on for five/six-seat starts) round-10-only 信标 supply. `beaconSupply.js` identifies that fixed reward, and `SharedItemPool` excludes it from shop stock.
+For this isolated 0.2.6 six-player checkout, [LOCAL-SIX-PLAYER.md](LOCAL-SIX-PLAYER.md) specifies the starting-roster BAN adjustment, unchanged shared pool multiplier, nine-card bounty draft for five/six-seat rooms, a 1.5× five-seat or 2× six-seat boss pool relative to the four-seat baseline, and optional (default-on for five/six-seat starts) round-10-only 信标 supply. `beaconSupply.js` identifies that fixed reward, and `SharedItemPool` excludes it from shop stock.
 
 ```
 server/match/
@@ -105,7 +105,8 @@ published as `m.public.deadline` (= `draft.turnDeadline`; `draft.turnSeconds` it
 at once. A turn that runs out takes the strategy the player highlights in the draft screen (`g.bandFocus {bandId?}`,
 `Match.timeoutBand`) while it is allowed and no teammate holds it, else `bandDraft.timeoutBandId` 华法琳, else the first
 free strategy by sortId (`defaultBand`; a departing seat gets `defaultBand` too). One skip per player (`g.bandSkip`: the
-player moves to the end of the order; refused when nobody is left to pass to); a strategy a teammate already took is
+player moves to the end of the order; refused when nobody is left to pass to). The draft screen disables skip when
+no other unpicked player remains; finished players stay in the published order but are not skip targets. A strategy a teammate already took is
 refused (队友已选); band must list the mode type in `modeTypeList`. A single human (co-op with AI teammates only):
 untimed. Solo: free pick, no timer, no skip. Starting LP = `bands[id].totalHp`.
 

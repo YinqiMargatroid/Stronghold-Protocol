@@ -45,7 +45,7 @@ test('six room seats and six battle result rows survive the wire path', () => {
   assert.deepEqual(Object.keys(fitResult(result, { budget: 1 }).perPlayer), ids);
 });
 
-test('five and six seats adjust only core BANs; shared chess pool remains the 0.2.5 twofold pool', () => {
+test('five and six seats adjust only core BANs; shared chess pool remains the upstream twofold pool', () => {
   const four = new GameData(DATA, MODE, 4);
   for (const count of [1, 2, 3, 4, 5, 6]) {
     const gd = new GameData(DATA, MODE, count);
@@ -58,14 +58,20 @@ test('five and six seats adjust only core BANs; shared chess pool remains the 0.
   assert.deepEqual(new GameData(DATA, 'mode_single_training', 1).bans('TRAINING'), { core: 0, addon: 0 });
 });
 
-test('six starting seats double the equivalent four-seat boss pool through eliminations', () => {
+test('five and six starting seats scale the equivalent four-seat boss pool by 1.5 and 2 through eliminations', () => {
   for (const modeId of ['mode_multi_funny', 'mode_multi_normal', 'mode_multi_hard', 'mode_multi_abyss']) {
     const four = new GameData(DATA, modeId, 4);
     const five = new GameData(DATA, modeId, 5);
     const six = new GameData(DATA, modeId, 6);
-    for (const bossId of Object.keys(DATA.bosses)) for (const alive of [1, 2, 4, 5, 6]) {
-      assert.equal(five.bossPoolHp(bossId, alive), four.bossPoolHp(bossId, alive));
-      assert.equal(six.bossPoolHp(bossId, alive), four.bossPoolHp(bossId, alive) * 2);
+    for (const bossId of Object.keys(DATA.bosses)) for (const alive of [1, 2, 3, 4, 5, 6]) {
+      const fourSeatAlive = Math.min(4, alive);
+      const baselineShare = four.bossPoolShare(fourSeatAlive);
+      assert.equal(five.bossPoolShare(alive), baselineShare * 1.5);
+      assert.equal(six.bossPoolShare(alive), baselineShare * 2);
+      const boss = four.boss(bossId);
+      const baseHp = boss.bloodPoint[four.difficulty] ?? Object.values(boss.bloodPoint).find(Number.isFinite) ?? 500000;
+      assert.equal(five.bossPoolHp(bossId, alive), Math.max(1, Math.round(baseHp * baselineShare * 1.5)));
+      assert.equal(six.bossPoolHp(bossId, alive), Math.max(1, Math.round(baseHp * baselineShare * 2)));
     }
   }
 });
@@ -81,7 +87,10 @@ test('five and six surviving seats enter 2+2+1 and 2+2+2 boss fields', () => {
       assert.deepEqual(m.fields.map((f) => f.players.length).sort(), count === 5 ? [1, 2, 2] : [2, 2, 2]);
       assert.equal(new Set(m.fields.flatMap((f) => f.players)).size, count);
       const four = new GameData(DATA, m.modeId, 4);
-      assert.equal(m.bossPool.maxHp, four.bossPoolHp(m.bossId, count) * (count === 6 ? 2 : 1));
+      const baselineShare = four.bossPoolShare(4);
+      const boss = four.boss(m.bossId);
+      const baseHp = boss.bloodPoint[four.difficulty] ?? Object.values(boss.bloodPoint).find(Number.isFinite) ?? 500000;
+      assert.equal(m.bossPool.maxHp, Math.max(1, Math.round(baseHp * baselineShare * (count === 6 ? 2 : 1.5))));
       assert.ok(m.fields.every((f) => f.spec.boss.poolMax === m.bossPool.maxHp));
     } finally { h.m.dispose(); }
   }

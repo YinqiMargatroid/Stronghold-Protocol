@@ -14,7 +14,7 @@
 // untracked work, caches, logs and per-machine config never get in: server/, shared/, data/, public/ (not public/dev/),
 // packs/ (the content packs that ship with the repository, docs/PACKS.md; a pack installed on this machine and not
 // committed stays out),
-// the start scripts, the tools a player runs (setup, vendor = the postinstall, fetch-assets + tools/assets, doctor, and
+// the root start-server.cmd and the other start scripts, the tools a player runs (setup, vendor = the postinstall, fetch-assets + tools/assets, doctor, and
 // what setup starts: tools/local-extract, crop-board-atlas), the research tables the Node server (server/sim/
 // nodeData.js fallback) and fetch-assets read, package.json / package-lock.json, LICENSE / NOTICE.md /
 // THIRD-PARTY-NOTICES.md, README.md, CHANGELOG.md, docs/PLAYING.md and docs/DEPLOY.md. `npm ci --omit=dev` in the
@@ -43,7 +43,7 @@
 // file are removed, so a player never gets a run that reports zero tests and exits 0. The same stage rewrites the
 // shipped Markdown (GitHub #530): a relative link whose target is in the zip stays relative; a picture becomes
 // <repo>/raw/<tag>/<path>; another missing file becomes <repo>/blob/<tag>/<path>; `../../releases/latest` becomes
-// the repository releases/latest URL. This six-player fork's 0.2.5 package points to its own release tag; other
+// the repository releases/latest URL. This six-player fork's 0.2.5 and 0.2.6 packages point to their own release tags; other
 // versions use `v` plus the package version with a trailing `-dev` removed. The git checkout stays relative.
 // The account name comes from the OS at run time (never written in the repository): SP_PACKAGE_SCAN_USER=0 skips it
 // (a name that is a common word), SP_PACKAGE_SCAN_NAMES=a,b adds more names to refuse.
@@ -81,7 +81,7 @@ const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 export const FOLDER = 'Stronghold-Protocol';
 
 /** Root files a player gets. */
-export const ROOT_FILES = ['package.json', 'package-lock.json', 'LICENSE', 'NOTICE.md', 'THIRD-PARTY-NOTICES.md', 'README.md', 'CHANGELOG.md'];
+export const ROOT_FILES = ['package.json', 'package-lock.json', 'LICENSE', 'NOTICE.md', 'THIRD-PARTY-NOTICES.md', 'README.md', 'CHANGELOG.md', 'start-server.cmd'];
 /** The player docs. */
 export const PLAYER_DOCS = ['docs/PLAYING.md', 'docs/DEPLOY.md'];
 /** Research tables read at run time: server/sim/nodeData.js (the Node sim's fallback) and tools/fetch-assets.mjs. */
@@ -107,8 +107,8 @@ export const PLAYER_NPM_SCRIPTS = ['start', 'setup', 'doctor', 'launch', 'postin
 export const PLAYER_MARKDOWN = [...ROOT_FILES, ...PLAYER_DOCS].filter((f) => f.endsWith('.md'));
 /** Where a packaged doc link points when the file itself is not in the zip. */
 export const GITHUB_REPO = 'https://github.com/YinqiMargatroid/Stronghold-Protocol-Six-Player';
-/** Release tag used when rewriting links in this fork's 0.2.5 player bundles. */
-export const SIX_PLAYER_RELEASE_TAG = 'v0.2.5-six-player.3';
+/** Release tag used when rewriting links in this fork's 0.2.6 player bundles. */
+export const SIX_PLAYER_RELEASE_TAG = 'v0.2.6-six-player.1';
 
 /**
  * THE SWITCH for the Japanese voice dub in the full zip (`audio.voiceJp` of data/assets.json: 2674 files under
@@ -374,13 +374,14 @@ export function playerPackageProblems(pkg, files) {
 }
 
 /**
- * This fork's 0.2.5 bundle points at its six-player release tag. Other versions use `v` + version,
+ * This fork's 0.2.5 and 0.2.6 bundles point at their six-player release tags. Other versions use `v` + version,
  * with a trailing `-dev` removed (`0.2.5-dev` → `v0.2.5`, `0.2.4` → `v0.2.4`).
  * [ASSUMED] an unreleased `-dev` build points player docs at the tag that version will use.
  * @param {string} version
  */
 export function releaseTag(version) {
-  if (version === '0.2.5') return SIX_PLAYER_RELEASE_TAG;
+  if (version === '0.2.5') return 'v0.2.5-six-player.3';
+  if (version === '0.2.6') return SIX_PLAYER_RELEASE_TAG;
   return `v${String(version ?? '').replace(/-dev$/, '')}`;
 }
 

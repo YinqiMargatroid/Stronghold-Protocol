@@ -43,7 +43,7 @@ test('selection: runtime files in; tests, maintainer tools, other docs, dev page
     'tools/local-extract/extract.py',
     'tools/local-extract/LICENSE-Ark-Unpacker.txt', 'scripts/start.sh', 'scripts/start-windows.bat', 'scripts/launch.mjs',
     'scripts/install-service-windows.ps1', 'docs/PLAYING.md', 'docs/DEPLOY.md', ...RUNTIME_RESEARCH, 'package.json',
-    'package-lock.json', 'LICENSE', 'NOTICE.md', 'THIRD-PARTY-NOTICES.md', 'README.md', 'CHANGELOG.md',
+    'package-lock.json', 'LICENSE', 'NOTICE.md', 'THIRD-PARTY-NOTICES.md', 'README.md', 'CHANGELOG.md', 'start-server.cmd',
     // out
     'test/version.test.js', 'tools/golden.mjs', 'tools/build-data.mjs', 'tools/check-imports.mjs', 'tools/package.mjs',
     'tools/i18n/fallback-remake.json', 'scripts/make-windows-bundle.mjs', 'docs/DESIGN.md', 'docs/WINDOWS.md', 'docs/ASSETS.md',
@@ -56,10 +56,10 @@ test('selection: runtime files in; tests, maintainer tools, other docs, dev page
   ]);
   for (const f of ['server/index.js', 'public/i18n/en.json', 'data/i18n/en.json', 'tools/assets/local-enemy-spines.json',
     'tools/assets/local-token-spines.json', 'tools/local-extract/LICENSE-Ark-Unpacker.txt', 'scripts/install-service-windows.ps1',
-    'docs/research/07-assets.json', 'CHANGELOG.md']) {
+    'docs/research/07-assets.json', 'CHANGELOG.md', 'start-server.cmd']) {
     assert.ok(keep.includes(f), `keeps ${f}`);
   }
-  assert.equal(keep.length, 35, keep.join(' '));
+  assert.equal(keep.length, 36, keep.join(' '));
   assert.equal(drop.length, 40, drop.join(' '));
   assert.ok(!keep.some((f) => drop.includes(f)));
 });
@@ -79,7 +79,7 @@ test('the real tracked tree: runtime in, the rest out; every shipped import, npm
   const p = plan(ROOT, { lite: true, allowDirty: true, scan: false, measure: false });
   assert.deepEqual(p.problems, []);
   const got = new Set(p.files);
-  for (const f of ['server/index.js', 'tools/setup.mjs', 'tools/fetch-assets.mjs', 'scripts/start.sh', 'docs/PLAYING.md', 'docs/DEPLOY.md',
+  for (const f of ['server/index.js', 'tools/setup.mjs', 'tools/fetch-assets.mjs', 'scripts/start.sh', 'start-server.cmd', 'docs/PLAYING.md', 'docs/DEPLOY.md',
     'package-lock.json', 'NOTICE.md', ...RUNTIME_RESEARCH]) assert.ok(got.has(f), f);
   for (const f of ['tools/golden.mjs', 'tools/package.mjs', 'scripts/make-windows-bundle.mjs', 'docs/DESIGN.md', 'eslint.config.js', 'Dockerfile']) {
     assert.ok(!got.has(f), f);
@@ -154,6 +154,7 @@ function fakeCheckout() {
   put('scripts/start.sh', '#!/usr/bin/env bash\nexec node scripts/launch.mjs\n');
   fs.chmodSync(path.join(dir, 'scripts/start.sh'), 0o755);
   for (const f of ['README.md', 'CHANGELOG.md', 'LICENSE', 'NOTICE.md', 'THIRD-PARTY-NOTICES.md', 'docs/PLAYING.md', 'docs/DEPLOY.md']) put(f, `# ${f}\n`);
+  put('start-server.cmd', '@echo off\r\ncall "%~dp0scripts\\start-windows.bat" --asset-source=mirror --no-open %*\r\n');
   for (const f of [...RUNTIME_RESEARCH, 'docs/research/01-core-data.json']) put(f, '{}\n');
   put('docs/img/x.jpg', PNG);
   put('.gitignore', 'public/assets/\npublic/fonts/\npublic/vendor/\ndata/local-assets.json\n.cache/\npv/\n');
@@ -180,7 +181,7 @@ function fakeCheckout() {
 const runTool = (args) => spawnSync(process.execPath, [TOOL, ...args], { encoding: 'utf8', env: { ...process.env, ...ENV }, maxBuffer: 16 * 1024 * 1024 });
 const listed = (stdout) => stdout.split('\n').filter((l) => l.startsWith('file ')).map((l) => l.slice(5));
 
-const SHIPPED_TRACKED = ['CHANGELOG.md', 'LICENSE', 'NOTICE.md', 'README.md', 'THIRD-PARTY-NOTICES.md', 'data/assets.json', 'data/chess.json',
+const SHIPPED_TRACKED = ['CHANGELOG.md', 'LICENSE', 'NOTICE.md', 'README.md', 'THIRD-PARTY-NOTICES.md', 'start-server.cmd', 'data/assets.json', 'data/chess.json',
   'docs/DEPLOY.md', 'docs/PLAYING.md', ...RUNTIME_RESEARCH, 'package-lock.json', 'package.json', 'public/index.html', 'public/js/main.js',
   'public/js/util.js', 'scripts/launch.mjs', 'scripts/start.sh', 'server/index.js', 'server/sim/rng.js', 'shared/constants.js',
   'tools/assets/network.mjs', 'tools/crop-board-atlas.mjs', 'tools/doctor.mjs', 'tools/fetch-assets.mjs', 'tools/local-extract/extract.py',

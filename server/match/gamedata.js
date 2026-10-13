@@ -4,9 +4,9 @@
 // unknown ids. Tunables come from data/config.json with the documented defaults (research 00-INDEX §2–§8) when a
 // key is missing, so a partial data set (tests, data being regenerated) still yields a working match.
 //
-// No custom balance (DESIGN §14 corrections, research 08 §6): enemy numbers are the official ones — the PRTS
-// per-round enemyScale table of data/config.json, the leader pool = bloodPoint per player alive at the fight's start
-// (bossPoolShareOf). data/tuning.json only overrides result titles:
+// Enemy numbers use the official PRTS per-round enemyScale table of data/config.json (DESIGN §14 corrections,
+// research 08 §6). The leader pool starts from bloodPoint per player alive at the fight's start (bossPoolShareOf),
+// then this fork applies its opening-five/six-seat multiplier once. data/tuning.json only overrides result titles:
 //   titles[titleId]                                                { stat?, rule? } merged over config.titles
 // (the former enemyHpMul / enemyAtkMul / enemySpeedMul / bossHpMul / flyPlaceholders knobs were removed; a tuning file
 // that still carries them is ignored).
@@ -135,8 +135,8 @@ export class GameData {
   }
 
   /**
-   * Leader HP pool multiplier — always 1 (no custom balance). Kept for callers written against the old tuning layer
-   * (finalAssault.bossPoolHp); use `bossPoolHp` / `bossPoolShare` for the official pool.
+   * Legacy tuning multiplier — always 1. Kept for callers written against the old tuning layer
+   * (finalAssault.bossPoolHp); use `bossPoolHp` / `bossPoolShare` for the current pool and local seat rule.
    * @deprecated
    */
   bossHpMul(bossId) { // eslint-disable-line no-unused-vars
@@ -168,11 +168,11 @@ export class GameData {
    * @param {number} [aliveCount]
    */
   bossPoolShare(aliveCount) {
-    // Rhine's six-seat rule doubles the equivalent four-seat pool, even after eliminations.
-    const six = !this.isSolo && this.startingPlayerCount === 6;
+    // This fork scales the equivalent four-seat pool once, fixed by the opening roster even after eliminations.
+    const multiplier = this.isSolo ? 1 : this.startingPlayerCount === 6 ? 2 : this.startingPlayerCount === 5 ? 1.5 : 1;
     const n = Number(aliveCount);
-    const count = six ? (Number.isFinite(n) && n >= 1 ? Math.min(4, n) : 4) : aliveCount;
-    return bossPoolShareOf(this.mode.bossHpScale, this.config.bossHpScale, this.isSolo, count) * (six ? 2 : 1);
+    const count = multiplier > 1 ? (Number.isFinite(n) && n >= 1 ? Math.min(4, n) : 4) : aliveCount;
+    return bossPoolShareOf(this.mode.bossHpScale, this.config.bossHpScale, this.isSolo, count) * multiplier;
   }
 
   /** config.titles with the tuning overrides (stat / rule per title id) merged in. */
