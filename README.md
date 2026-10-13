@@ -2,7 +2,7 @@
 
 《明日方舟》季节性自走棋塔防玩法「卫戍协议：盟约」的**非官方同人复刻**：浏览器即开即玩，单人或 1–6 人联机合作。
 
-> **社区六人分支（基于上游 0.2.5）**：这是 [原项目](https://github.com/sganggs/Stronghold-Protocol) 的独立 fork 分支，并非原项目发布版或官方玩法。只移植与人数直接相关的规则，未加入 Rhine 新盟约、干员与素材；六人局固定信标仅在第 10 回合发放。规则依据、验证结果和后续同步方法见 [六人分支说明](docs/LOCAL-SIX-PLAYER.md)。本分支只发布源码，不包含游戏素材或六人整合包；下文的 Releases 指上游四人版，不能直接当作本分支使用。
+> **社区六人分支（基于上游 0.2.5）**：这是 [原项目](https://github.com/sganggs/Stronghold-Protocol) 的独立 fork 分支，并非原项目发布版或官方玩法。只移植与人数直接相关的规则，未加入新盟约、干员与素材；六人局在第 10 回合发放额外补给信标。规则依据、验证结果和后续同步方法见 [六人分支说明](docs/LOCAL-SIX-PLAYER.md)。本分支只发布源码，不包含游戏素材或六人整合包；下文的 Releases 指上游四人版，不能直接当作本分支使用。
 
 ![version](https://img.shields.io/badge/version-0.2.5-2ea44f)
 ![license](https://img.shields.io/badge/code%20license-GPL--3.0--or--later-blue)
