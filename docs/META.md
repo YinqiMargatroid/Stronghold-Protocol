@@ -5,7 +5,7 @@ the **UI owner** consuming `m.public` / `m.private` / `m.result`, and anyone dri
 Normative contracts stay in DESIGN.md §6 and §8 ([design/match.md](design/match.md),
 [design/network.md](design/network.md)); this file documents the implementation and every assumption it makes.
 
-For this isolated 0.2.5 six-player checkout, [LOCAL-SIX-PLAYER.md](LOCAL-SIX-PLAYER.md) specifies the starting-roster BAN adjustment, unchanged shared pool multiplier, nine-card bounty draft, doubled six-seat boss pool, and round-10-only 信标 supply. `beaconSupply.js` identifies that fixed reward, and `SharedItemPool` excludes it from shop stock.
+For this isolated 0.2.5 six-player checkout, [LOCAL-SIX-PLAYER.md](LOCAL-SIX-PLAYER.md) specifies the starting-roster BAN adjustment, unchanged shared pool multiplier, nine-card bounty draft, doubled six-seat boss pool, and optional (default-on) round-10-only 信标 supply. `beaconSupply.js` identifies that fixed reward, and `SharedItemPool` excludes it from shop stock.
 
 ```
 server/match/

@@ -282,7 +282,7 @@ export class MatchPhases {
       if (ps.alive) continue;
       try { this.dispatcher.dispatchEliminated(ps, 'onRoundStart', { round: r }); } catch (e) { this.reportError('dispatch onRoundStart (eliminated)', e); }
     }
-    if (!this.isSolo && this.startingPlayerCount === 6 && SIX_PLAYER_BEACON_ROUNDS.has(r)) {
+    if (this.round10Beacon && !this.isSolo && this.startingPlayerCount === 6 && SIX_PLAYER_BEACON_ROUNDS.has(r)) {
       for (const ps of alive) {
         // Count a supply only once even if a client reconnects or the round entry is repeated.
         const key = `sixPlayerBeacon:${r}`;

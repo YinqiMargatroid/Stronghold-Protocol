@@ -3,6 +3,7 @@
 // scripts/start-windows.ps1 and scripts/start.sh (docs/DEPLOY.md).
 //
 //   node scripts/launch.mjs [--port 3000] [--host ::] [--no-open] [--no-setup] [setup options…]
+//   --no-round10-beacon disables the six-seat R10 fixed 信标 supply; --round10-beacon enables it (the default).
 //
 //   1. If our server already answers on the port, just open the browser (double-clicking twice is harmless).
 //   2. An update package extracted over the folder (UPDATE.json) is finished (server/update.js; the server does it too,
@@ -33,8 +34,8 @@ const { c, mark } = await import('../tools/setup.mjs');
 const { probePort, classifyAddresses, hostUrl, KIND_LABEL } = await import('../tools/doctor.mjs');
 const { applyPendingUpdate, UPDATE_FILE } = await import('../server/update.js');
 
-function parseArgs(argv) {
-  const o = { port: Number(process.env.PORT) || 3000, host: process.env.HOST || '::', open: !/^(1|true|yes)$/i.test(process.env.SP_NO_BROWSER || ''), setup: true, setupArgs: [], help: false };
+export function parseArgs(argv) {
+  const o = { port: Number(process.env.PORT) || 3000, host: process.env.HOST || '::', open: !/^(1|true|yes)$/i.test(process.env.SP_NO_BROWSER || ''), setup: true, setupArgs: [], round10Beacon: undefined, help: false };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     const [k, v] = a.split('=');
@@ -43,6 +44,8 @@ function parseArgs(argv) {
     else if (k === '--host') o.host = val() || o.host;
     else if (a === '--no-open') o.open = false;
     else if (a === '--no-setup') o.setup = false;
+    else if (a === '--no-round10-beacon') o.round10Beacon = false;
+    else if (a === '--round10-beacon') o.round10Beacon = true;
     else if (a === '-h' || a === '--help') o.help = true;
     else if (a === '--game') o.setupArgs.push(a, argv[++i] ?? '');
     else o.setupArgs.push(a);
@@ -114,6 +117,7 @@ async function main() {
   }
 
   const env = { ...process.env, PORT: String(o.port), HOST: o.host };
+  if (o.round10Beacon != null) env.SP_SIX_PLAYER_ROUND10_BEACON = o.round10Beacon ? '1' : '0';
   const child = spawn(process.execPath, [path.join(ROOT, 'server', 'index.js')], { cwd: ROOT, env, stdio: 'inherit' });
   const forward = (sig) => { if (child.exitCode === null) { try { child.kill(sig); } catch { /* gone */ } } };
   // SIGINT reaches the server straight from the terminal (same process group / console); forwarding it too would make

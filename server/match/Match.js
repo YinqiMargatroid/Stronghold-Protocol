@@ -15,6 +15,8 @@
 //   opts.aiPicksLast boolean (optional)         the co-op room option 「AI 队友最后选择」 (room.setAiPicksLast, GitHub #338):
 //                                              the strategy and 机变 drafts put every human seat before every AI seat
 //                                              (MatchPhases.humansFirst); only `true` turns it on; ignored in solo
+//   opts.round10Beacon boolean (optional)       six-seat R10 fixed 信标 supply (default on; env
+//                                              SP_SIX_PLAYER_ROUND10_BEACON=0 turns it off)
 //   opts.seats       Array<{ seat: 0..5, playerId: string, name: string, isBot: boolean, connected: boolean,
 //                            loadout?: { [baseChessId]: { skill: index, module: uniEquipId|'none'|null } } | null,
 //                            ops?: { [charId]: { potential: 1–6, cultivate: 0–3 } } | null,
@@ -254,6 +256,10 @@ export class Match {
     this.gd = new GameData(this.data, this.modeId, this.startingPlayerCount);
     if (!this.difficulty) this.difficulty = this.gd.difficulty;
     this.isSolo = this.mode === 'solo' || this.gd.isSolo;
+    /** Community six-seat R10 supply; fixed per match so a running game cannot change rules midway. */
+    this.round10Beacon = opts.round10Beacon == null
+      ? !/^(0|false|off|no)$/i.test(String(env('SP_SIX_PLAYER_ROUND10_BEACON') ?? '').trim())
+      : opts.round10Beacon === true;
     /** 「AI 队友最后选择」 (opts.aiPicksLast, GitHub #338): humans draft before AI seats (MatchPhases.humansFirst) */
     this.aiPicksLast = !this.isSolo && opts.aiPicksLast === true;
     this.ownsScheduler = !opts.scheduler;

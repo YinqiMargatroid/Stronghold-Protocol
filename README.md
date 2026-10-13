@@ -2,7 +2,7 @@
 
 《明日方舟》季节性自走棋塔防玩法「卫戍协议：盟约」的**非官方同人复刻**：浏览器即开即玩，单人或 1–6 人联机合作。
 
-> **社区六人分支（基于上游 0.2.5）**：这是 [原项目](https://github.com/sganggs/Stronghold-Protocol) 的独立 fork 分支，并非原项目发布版或官方玩法。只移植与人数直接相关的规则，未加入新盟约、干员与素材；六人局在第 10 回合发放额外补给信标。规则依据、验证结果和后续同步方法见 [六人分支说明](docs/LOCAL-SIX-PLAYER.md)。本分支只发布源码，不包含游戏素材或六人整合包；下文的 Releases 指上游四人版，不能直接当作本分支使用。
+> **社区六人分支（基于上游 0.2.5）**：这是 [原项目](https://github.com/sganggs/Stronghold-Protocol) 的独立 fork 分支，并非原项目发布版或官方玩法。只移植与人数直接相关的规则，未加入新盟约、干员与素材；六人局默认在第 10 回合发放额外补给信标，可用启动参数关闭。规则依据、验证结果和后续同步方法见 [六人分支说明](docs/LOCAL-SIX-PLAYER.md)。本分支只发布源码，不包含游戏素材或六人整合包；下文的 Releases 指上游四人版，不能直接当作本分支使用。
 
 ![version](https://img.shields.io/badge/version-0.2.5-2ea44f)
 ![license](https://img.shields.io/badge/code%20license-GPL--3.0--or--later-blue)
@@ -96,6 +96,8 @@ npm start          # 启动服务器：http://localhost:3000
 
 也可以直接运行启动脚本（Windows `scripts\start-windows.bat`，macOS / Linux `scripts/start.sh`）：首次会自动安装依赖、下载素材，然后启动服务器并打开浏览器。
 
+六人局第 10 回合的固定信标补给默认开启。开服时给启动脚本加 `--no-round10-beacon` 可关闭，例如 Windows 运行 `.\scripts\start-windows.bat --no-round10-beacon`；加 `--round10-beacon` 可明确开启。直接使用 `npm start` 时，可设置 `SP_SIX_PLAYER_ROUND10_BEACON=0` 关闭。启动参数只对新启动的服务器生效，普通信标的购买和效果不受影响。
+
 - **本地客户端素材（可选）**：官方 3D 棋盘、部分官方界面图标（交流按钮与表情面板的边框、模组类型图标等）、灼热 / 炽焰源石虫和 39 个召唤物（多数自选召唤物）的官方模型需要从本机的《明日方舟》PC 客户端提取（Windows 原生客户端、macOS 的 CrossOver 或 PlayCover）。`npm run setup` 检测到客户端时会询问是否提取（需要 Python 3.8+，依赖装在项目内的 `.venv-extract`，不影响系统）；之后可以用 `node tools/setup.mjs --local` 重新提取，或用 `--game "<…/StreamingAssets/AB/Windows>"` 指定路径。没有客户端时游戏照常运行，这几样换成替代样式：2D 棋盘、样式相近的图标、染色的普通源石虫、召唤物头像。表情和「玩法说明」的教程图随上面的素材一起从公开镜像下载，不需要客户端。没有客户端的服务器（例如 Linux VPS）也可以从**同一版本**的整合包（完整包；精简包没有）里复制 `public/assets/local/` 和 `data/local-assets.json`，见 [docs/DEPLOY.md](docs/DEPLOY.md) 的「本地客户端素材」。
 - 素材下载优先使用 GitHub，失败时自动改用 jsDelivr 镜像。
 - `npm run doctor`（即 `node tools/doctor.mjs`）可以随时诊断：Node 版本、素材是否完整、端口占用、局域网地址和防火墙。
@@ -120,6 +122,7 @@ npm start          # 启动服务器：http://localhost:3000
 | `HOST` | `::` | 监听地址。默认 `::` 是双栈：同一个端口同时接受 IPv6 和 IPv4；`0.0.0.0` = 只 IPv4；`127.0.0.1` = 只允许本机，放在反向代理后面时使用 |
 | `SP_COMBAT` | `client` | `client`：各玩家浏览器模拟自己的战斗（服务器负载极低）；`server`：由服务器模拟并推流 |
 | `SP_VERIFY` | `off` | 服务器复算客户端上报的战斗结果：`off` / `sample`（约 1/8 抽查）/ `all`（全部复算，更耗 CPU） |
+| `SP_SIX_PLAYER_ROUND10_BEACON` | `1` | 六人局第 10 回合固定信标补给；设为 `0` 可关闭。通过启动脚本也可使用 `--no-round10-beacon` 关闭、`--round10-beacon` 开启；普通信标不受影响 |
 | `TRUST_PROXY` | `auto` | 是否信任 `X-Forwarded-For` 等转发头：`auto` 只信任来自本机 / 内网的代理；`1` 总是；`0` 从不 |
 | `DEBUG` | 空 | 设为任意值输出详细日志 |
 | `SP_NO_BROWSER` | 空 | 设为 `1` 时启动脚本不自动打开浏览器 |
@@ -252,7 +255,7 @@ node tools/perfbench.mjs --cpu 1,4,6 --profile             # 真实战斗的帧�
 
 ## English
 
-An **unofficial, non-commercial fan remake** of Arknights' seasonal auto-chess tower-defense mode *Stronghold Protocol: Alliance*, played in the browser: solo, or 1–6 player co-op (AI teammates can fill seats). This community fork branch applies only seat-related rules from Rhine to upstream 0.2.5, with a local round-10-only beacon supply. It is not an upstream release and provides source only; upstream Releases contain the four-seat build. See [the branch notes](docs/LOCAL-SIX-PLAYER.md) for sources, verification and upstream sync steps. Combat is simulated in each player's browser, so a low-power PC can host.
+An **unofficial, non-commercial fan remake** of Arknights' seasonal auto-chess tower-defense mode *Stronghold Protocol: Alliance*, played in the browser: solo, or 1–6 player co-op (AI teammates can fill seats). This community fork branch applies only seat-related rules from Rhine to upstream 0.2.5, with a local round-10-only beacon supply enabled by default and configurable at launch. It is not an upstream release and provides source only; upstream Releases contain the four-seat build. See [the branch notes](docs/LOCAL-SIX-PLAYER.md) for sources, verification and upstream sync steps. Combat is simulated in each player's browser, so a low-power PC can host.
 
 To run this six-seat fork, clone its `master` branch and follow the source setup steps above. The release archive instructions below apply only to upstream four-seat builds.
 

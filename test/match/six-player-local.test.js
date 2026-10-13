@@ -8,12 +8,20 @@ import { createRng } from '../../server/sim/rng.js';
 import { buildBattleSpec, compactResult, createBattleFromSpec, fitResult } from '../../server/sim/spec.js';
 import { validateClientResult } from '../../server/match/fields.js';
 import { normalizeSeats } from '../../public/js/screens/room.js';
+import { parseArgs as parseLaunchArgs } from '../../scripts/launch.mjs';
 import { DATA, give, legalTileFor, makeMatch } from './harness.js';
 
 const BEACON = 'chess_item_5_04_e_a';
 const MODE = 'mode_multi_hard';
 const ids = Array.from({ length: 6 }, (_, i) => `p_${i}`);
 const beacons = (ps) => [...ps.hand, ...ps.temp].filter((p) => p?.id === BEACON);
+
+test('round-10 beacon launch flags stay out of asset setup arguments', () => {
+  const off = parseLaunchArgs(['--no-round10-beacon', '--asset-source=mirror']);
+  assert.equal(off.round10Beacon, false);
+  assert.deepEqual(off.setupArgs, ['--asset-source=mirror']);
+  assert.equal(parseLaunchArgs(['--no-round10-beacon', '--round10-beacon']).round10Beacon, true);
+});
 
 test('six room seats and six battle result rows survive the wire path', () => {
   assert.equal(MAX_SEATS, 6);
@@ -114,6 +122,33 @@ test('six-seat R10 beacon supply is independent of item shop stock and granted o
     for (const player of h.m.order) assert.deepEqual(beacons(player).filter((p) => p.meta.sixPlayerBeaconRound).map((p) => p.meta.sixPlayerBeaconRound), [10]);
     h.invariants();
   } finally { h.m.dispose(); }
+});
+
+test('disabling the R10 supply leaves ordinary beacons and shop stock unchanged', () => {
+  const previous = process.env.SP_SIX_PLAYER_ROUND10_BEACON;
+  process.env.SP_SIX_PLAYER_ROUND10_BEACON = '0';
+  let h;
+  try {
+    h = makeMatch({ humans: 6, difficulty: 'HARD', fake: true, seed: 8643 }).start();
+    assert.equal(h.m.round10Beacon, false);
+    h.toPrep(1);
+    const player = h.ps('p_0');
+    const ordinary = player.acquireItem(BEACON);
+    assert.ok(ordinary);
+    assert.equal(ordinary.meta.sixPlayerBeaconRound, undefined);
+    const stock = h.m.itemPool.left(BEACON);
+    h.m.startRound(10);
+    h.m.startRound(12);
+    h.m.startRound(14);
+    for (const ps of h.m.order) assert.equal(beacons(ps).filter((p) => p.meta.sixPlayerBeaconRound).length, 0);
+    assert.ok(beacons(player).some((p) => p.uid === ordinary.uid));
+    assert.equal(h.m.itemPool.left(BEACON), stock);
+    h.invariants();
+  } finally {
+    h?.m.dispose();
+    if (previous === undefined) delete process.env.SP_SIX_PLAYER_ROUND10_BEACON;
+    else process.env.SP_SIX_PLAYER_ROUND10_BEACON = previous;
+  }
 });
 
 test('the R10 beacon gives the replaced operator to the best matching teammate next prep', () => {

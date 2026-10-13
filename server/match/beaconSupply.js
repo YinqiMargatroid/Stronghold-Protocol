@@ -3,7 +3,7 @@ export const ROUND_BEACON_ITEM = 'chess_item_5_04_e_a';
 export const SIX_PLAYER_BEACON_ROUNDS = new Set([10]);
 
 export function milestoneBeaconRound(match, itemId, source) {
-  return source === 'sixPlayerBeacon' && itemId === ROUND_BEACON_ITEM && !match.isSolo
+  return match.round10Beacon && source === 'sixPlayerBeacon' && itemId === ROUND_BEACON_ITEM && !match.isSolo
     && match.startingPlayerCount === 6 && SIX_PLAYER_BEACON_ROUNDS.has(match.round) ? match.round : null;
 }
 
