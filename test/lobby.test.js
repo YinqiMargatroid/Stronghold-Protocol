@@ -559,36 +559,45 @@ describe('websocket lobby', () => {
   });
 
   test('rate limit: bursts beyond 40 msg/s get RATE, connection survives, bucket refills', async () => {
-    const c = await pool.player('Spammer');
-    const N = 100;
-    const rids = [];
-    for (let i = 0; i < N; i++) rids.push(c.send({ t: 'ping', c: i }));
-    const replies = [];
-    for (const rid of rids) replies.push(await c.waitFor(null, (m) => m.rid === rid, 3000));
-    const pongs = replies.filter((m) => m.t === 'pong').length;
-    const limited = replies.filter((m) => m.t === 'error' && m.code === ERR.RATE).length;
-    assert.equal(pongs + limited, N);
-    assert.ok(pongs >= 39 && pongs <= 45, `pongs ${pongs}`); // hello used one token
-    assert.ok(limited >= 55, `limited ${limited}`);
-    assert.ok(c.isOpen);
-    await delay(1100);
-    const ok = await c.request({ t: 'ping', c: 0 });
-    assert.equal(ok.t, 'pong');
+    // Other test files can keep the CI runner busy while these frames arrive. Hold the server clock still so the
+    // expected burst size measures the token bucket, not how quickly the runner schedules WebSocket callbacks.
+    const realNow = srv.network.now;
+    let now = Date.now();
+    srv.network.now = () => now;
+    try {
+      const c = await pool.player('Spammer');
+      const N = 100;
+      const rids = [];
+      for (let i = 0; i < N; i++) rids.push(c.send({ t: 'ping', c: i }));
+      const replies = [];
+      for (const rid of rids) replies.push(await c.waitFor(null, (m) => m.rid === rid, 3000));
+      const pongs = replies.filter((m) => m.t === 'pong').length;
+      const limited = replies.filter((m) => m.t === 'error' && m.code === ERR.RATE).length;
+      assert.equal(pongs, 39, 'hello used one of the 40 burst tokens');
+      assert.equal(limited, N - pongs);
+      assert.ok(c.isOpen);
+      now += 1100;
+      const ok = await c.request({ t: 'ping', c: 0 });
+      assert.equal(ok.t, 'pong');
+    } finally {
+      srv.network.now = realNow;
+    }
   });
 
   test('flooding far beyond the limit closes the socket (1008)', async () => {
-    const c = await pool.player('Flood');
-    // bursts until the server closes it: the close needs more than abuseDropsPerSec drops inside one 1 s window, and on
-    // a heavily loaded machine a single burst of 600 can be read over more than a second — the old single burst then
-    // never closed the socket and `await c.closed` (no timeout) hung the whole file
-    const t0 = Date.now();
-    while (c.isOpen && Date.now() - t0 < 20000) {
-      for (let i = 0; i < 600 && c.isOpen; i++) c.send({ t: 'ping', c: i, rid: null });
-      await delay(50);
+    // The policy counts dropped frames inside one second. Keep that second fixed even if a loaded runner reads the
+    // 600 queued frames slowly; otherwise this checks runner speed rather than the flooding threshold.
+    const realNow = srv.network.now;
+    srv.network.now = () => 1000;
+    try {
+      const c = await pool.player('Flood');
+      for (let i = 0; i < 600; i++) c.send({ t: 'ping', c: i, rid: null });
+      const info = await Promise.race([c.closed, delay(20000).then(() => null)]);
+      assert.ok(info, 'the server closed the flooding socket');
+      assert.equal(info.code, 1008);
+    } finally {
+      srv.network.now = realNow;
     }
-    const info = await Promise.race([c.closed, delay(10000).then(() => null)]);
-    assert.ok(info, 'the server closed the flooding socket');
-    assert.equal(info.code, 1008);
   });
 
   test('create / join / leave', async () => {
