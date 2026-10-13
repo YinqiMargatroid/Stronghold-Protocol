@@ -16,7 +16,7 @@
 | 悬赏选卡 | 开局 5 或 6 人时，悬赏轮选由 6 张增至 9 张：额外 3 张现有击杀悬赏（Ⅰ / Ⅱ / Ⅱ 阶，奖励 1 / 2 / 2）；前端显示全部 9 张并允许选择第 7–9 张。其他选卡类别仍为 6 张。 |
 | 固定信标补给 | 开局 5 或 6 人时默认仅在第 10 回合给每位存活玩家 1 个普通信标；4 人及以下无此固定补给。开服参数 `--no-round10-beacon` 可关闭，`--round10-beacon` 可明确开启；不影响商店里的普通信标。 |
 
-共享干员卡池继续使用上游 0.2.5 的 `economy.poolCopies` 基础数量和 `economy.coopPoolMultiplier = 2`，**本分支没有再按人数扩容卡池**。本分支也没有加入 Rhine 改版的新盟约、干员、物品或场景内容。规则细节和测试见[六人分支说明](docs/LOCAL-SIX-PLAYER.md)。
+共享干员卡池继续使用上游 0.2.5 的 `economy.poolCopies` 基础数量和 `economy.coopPoolMultiplier = 2`，**本分支没有再按人数扩容卡池**。本分支也没有加入新盟约、干员、物品或场景内容。规则细节和测试见[六人分支说明](docs/LOCAL-SIX-PLAYER.md)。
 
 ![version](https://img.shields.io/badge/version-0.2.5-2ea44f)
 ![license](https://img.shields.io/badge/code%20license-GPL--3.0--or--later-blue)
