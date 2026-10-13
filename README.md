@@ -87,8 +87,8 @@ English summary: [below](#english).
 ### 方式二：从源码运行
 
 ```bash
-git clone --branch community/six-player-0.2.5 https://github.com/YinqiMargatroid/Stronghold-Protocol.git
-cd Stronghold-Protocol
+git clone https://github.com/YinqiMargatroid/Stronghold-Protocol-Six-Player.git
+cd Stronghold-Protocol-Six-Player
 npm install        # 安装依赖（postinstall 会把 pixi / preact / three 复制到 public/vendor）
 npm run setup      # 检查环境，并从公开镜像下载约 550 MB 美术 / 音频（可中断，再次运行会续传）
 npm start          # 启动服务器：http://localhost:3000
@@ -254,7 +254,7 @@ node tools/perfbench.mjs --cpu 1,4,6 --profile             # 真实战斗的帧�
 
 An **unofficial, non-commercial fan remake** of Arknights' seasonal auto-chess tower-defense mode *Stronghold Protocol: Alliance*, played in the browser: solo, or 1–6 player co-op (AI teammates can fill seats). This community fork branch applies only seat-related rules from Rhine to upstream 0.2.5, with a local round-10-only beacon supply. It is not an upstream release and provides source only; upstream Releases contain the four-seat build. See [the branch notes](docs/LOCAL-SIX-PLAYER.md) for sources, verification and upstream sync steps. Combat is simulated in each player's browser, so a low-power PC can host.
 
-To run this six-seat branch, clone `community/six-player-0.2.5` from this fork and follow the source setup steps above. The release archive instructions below apply only to upstream four-seat builds.
+To run this six-seat fork, clone its `master` branch and follow the source setup steps above. The release archive instructions below apply only to upstream four-seat builds.
 
 - **Run:** download the full bundle `Stronghold-Protocol-v<version>.zip` (~550 MB, all the art inside, the Chinese and Japanese operator voices and the official battlefield scenes included) from [Releases](https://github.com/sganggs/Stronghold-Protocol/releases/latest) — or the lite one, `…-lite.zip` (~22 MB), which downloads the art (~550 MB) on its first start; from 0.2.1 on, `…-update.zip` holds only the files changed since the earlier 0.2.x releases: stop the server, extract it over an existing 0.2.x folder and start again (the first start deletes the files the new version dropped and verifies the install) — install Node.js 22 or 24, then double-click `scripts\start-windows.bat` (Windows) or run `./scripts/start.sh` (macOS / Linux) and open <http://localhost:3000>. From source: `npm install && npm run setup && npm start` (setup downloads ~550 MB of art from public mirrors, the emotes and the how-to-play pages included; the official 3D board, some official HUD icons, two enemy models and 39 summon models are extracted from a local Arknights client — without one the game uses the 2D board and look-alike stand-ins (the summons show their avatars), and a server can copy `public/assets/local/` and `data/local-assets.json` from the full bundle of the same version).
 - **Languages:** Chinese (the default), English, 日本語, 한국어 and 繁體中文 — switch on the title screen or in Settings. Game texts come from the official clients; the Japanese, Korean and Traditional Chinese interface strings are machine translations (corrections welcome: [docs/I18N.md](docs/I18N.md)).
