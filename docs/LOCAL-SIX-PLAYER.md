@@ -1,6 +1,6 @@
 # Community six-player rules on upstream 0.2.5
 
-Part of [DESIGN.md](DESIGN.md) for this isolated community fork branch. It is not an upstream release or a claim about official Arknights rules. The code is GPL-3.0-or-later, and game assets are excluded; keep the project non-commercial and do not commit extracted or downloaded art/audio.
+Part of [DESIGN.md](DESIGN.md) for this isolated community fork branch. It is not an upstream release or a claim about official Arknights rules. The code is GPL-3.0-or-later; game assets are excluded from that license and from Git. The fork's full [release bundle](https://github.com/YinqiMargatroid/Stronghold-Protocol-Six-Player/releases) carries prepared art/audio for non-commercial use; do not commit extracted or downloaded assets.
 
 This branch begins at [upstream commit `cf7a9400`](https://github.com/sganggs/Stronghold-Protocol/commit/cf7a9400) (0.2.5). It ports the rules directly related to larger rooms from [Stronghold-Protocol-Rhine's multiplayer notes](https://github.com/YUYUYUYUYUYUYUTOUA/Stronghold-Protocol-Rhine/blob/codex/rhine-upstream-021/docs/MULTIPLAYER.md). Rhine's new bonds, operators, items, and scenario content are outside this overlay. The inherited upstream 0.2.5 rules and data apply otherwise. The twofold co-op pool baseline follows [upstream PR #477](https://github.com/sganggs/Stronghold-Protocol/pull/477); the round-10-only beacon supply is a local choice made on 2026-10-12, not an official finding.
 
@@ -25,7 +25,7 @@ Fork revision on 2026-10-13: this server-start option was added so hosts can cho
 - `node --test test/docs-consistency.test.js test/docs-paths.test.js`: 32 passed, 0 failed.
 - `npm run lint`: 0 errors; `npm run typecheck`: passed. The full `npm run ci` passed on the six-player baseline before this option and was not rerun for this local change.
 - `npm run golden`: 287 scenarios match, with no golden files changed. Browser E2E and a full six-human playthrough were not run.
-- Source only: `public/assets/`, `data/local-assets.json`, caches, dependencies, and local extraction results are not committed. Each installation prepares its own assets. The upstream release archives are four-seat builds.
+- Git source excludes `public/assets/`, `data/local-assets.json`, caches, dependencies, and local extraction results. The fork's full release bundle includes checked assets and scenes; the lite bundle prepares assets at first start. Upstream release archives are four-seat builds and are not compatible updates for this fork.
 
 ## Following upstream
 

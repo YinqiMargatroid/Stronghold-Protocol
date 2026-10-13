@@ -42,9 +42,9 @@
 // vendor, assets. `npm test` (`node --test`, and test/ is not shipped), golden, build-data, lint, typecheck and this
 // file are removed, so a player never gets a run that reports zero tests and exits 0. The same stage rewrites the
 // shipped Markdown (GitHub #530): a relative link whose target is in the zip stays relative; a picture becomes
-// <repo>/raw/v<tag>/<path>; another missing file becomes <repo>/blob/v<tag>/<path>; `../../releases/latest` becomes
-// the repository releases/latest URL. The tag is `v` plus the package version with a trailing `-dev` removed. The
-// copies in the git checkout stay relative.
+// <repo>/raw/<tag>/<path>; another missing file becomes <repo>/blob/<tag>/<path>; `../../releases/latest` becomes
+// the repository releases/latest URL. This six-player fork's 0.2.5 package points to its own release tag; other
+// versions use `v` plus the package version with a trailing `-dev` removed. The git checkout stays relative.
 // The account name comes from the OS at run time (never written in the repository): SP_PACKAGE_SCAN_USER=0 skips it
 // (a name that is a common word), SP_PACKAGE_SCAN_NAMES=a,b adds more names to refuse.
 //
@@ -106,7 +106,9 @@ export const PLAYER_NPM_SCRIPTS = ['start', 'setup', 'doctor', 'launch', 'postin
 /** Markdown copied into the zip. Relative links to anything else are rewritten at stage time. */
 export const PLAYER_MARKDOWN = [...ROOT_FILES, ...PLAYER_DOCS].filter((f) => f.endsWith('.md'));
 /** Where a packaged doc link points when the file itself is not in the zip. */
-export const GITHUB_REPO = 'https://github.com/sganggs/Stronghold-Protocol';
+export const GITHUB_REPO = 'https://github.com/YinqiMargatroid/Stronghold-Protocol-Six-Player';
+/** This fork's first bundled release includes the optional round-10 beacon launch flag. */
+export const SIX_PLAYER_RELEASE_TAG = 'v0.2.5-six-player.2';
 
 /**
  * THE SWITCH for the Japanese voice dub in the full zip (`audio.voiceJp` of data/assets.json: 2674 files under
@@ -372,11 +374,13 @@ export function playerPackageProblems(pkg, files) {
 }
 
 /**
- * `v` + version, with a trailing `-dev` removed (`0.2.5-dev` → `v0.2.5`, `0.2.4` → `v0.2.4`).
+ * This fork's 0.2.5 bundle points at its six-player release tag. Other versions use `v` + version,
+ * with a trailing `-dev` removed (`0.2.5-dev` → `v0.2.5`, `0.2.4` → `v0.2.4`).
  * [ASSUMED] an unreleased `-dev` build points player docs at the tag that version will use.
  * @param {string} version
  */
 export function releaseTag(version) {
+  if (version === '0.2.5') return SIX_PLAYER_RELEASE_TAG;
   return `v${String(version ?? '').replace(/-dev$/, '')}`;
 }
 

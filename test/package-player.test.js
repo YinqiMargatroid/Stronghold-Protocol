@@ -18,6 +18,7 @@ const KEPT = [...PLAYER_NPM_SCRIPTS, 'dev'];
 
 test('release tags drop a trailing -dev and keep an already released version', () => {
   assert.equal(releaseTag('0.2.5-dev'), 'v0.2.5');
+  assert.equal(releaseTag('0.2.5'), 'v0.2.5-six-player.2');
   assert.equal(releaseTag('0.2.4'), 'v0.2.4');
   assert.equal(releaseTag('9.9.9'), 'v9.9.9');
 });
@@ -63,7 +64,7 @@ test('packaged copies of the shipped docs point unshipped relative links at the 
   const shipped = new Set(selectTracked(trackedFiles(ROOT)).keep);
   const version = pkg.version;
   const tag = releaseTag(version);
-  const host = 'https://github.com/sganggs/Stronghold-Protocol';
+  const host = 'https://github.com/YinqiMargatroid/Stronghold-Protocol-Six-Player';
   const focus = new Set(['README.md', 'docs/PLAYING.md', 'docs/DEPLOY.md']);
   let fileRewrites = 0;
   assert.ok(PLAYER_MARKDOWN.includes('README.md') && PLAYER_MARKDOWN.includes('docs/PLAYING.md') && PLAYER_MARKDOWN.includes('docs/DEPLOY.md'));

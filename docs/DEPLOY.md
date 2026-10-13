@@ -1,5 +1,7 @@
 # 部署指南
 
+> 本文随社区六人版 fork 发布。请从 [六人版 Releases](https://github.com/YinqiMargatroid/Stronghold-Protocol-Six-Player/releases) 获取完整包或精简包；原项目的四人版整合包和更新包不能用于本 fork。本次六人版没有更新包。
+
 目标：在一台家用 Windows 小主机上长期开服，让朋友通过局域网或公网来玩。macOS / Linux / Docker 放在后面。
 所有命令都在项目根目录执行。遇到问题先运行 `node tools/doctor.mjs`（只读诊断）。
 
@@ -26,14 +28,16 @@
    ```
    装完**关闭并重新打开**终端，`node -v` 应显示 v22 或更高（winget 的 LTS 目前是 v24.x，同样可用）。没有 winget 时从 <https://nodejs.org/zh-cn/download> 和 <https://git-scm.com/download/win> 下载安装。
 2. 下载，三选一。建议放在一个固定、短、**不在 OneDrive 同步范围内**的目录，例如 `C:\Stronghold-Protocol`：
-   - **完整包（推荐）**：在仓库的 [Releases](https://github.com/sganggs/Stronghold-Protocol/releases) 页面下载最新版本的 `Stronghold-Protocol-v<版本>.zip`（约 550 MB，解压后约 780 MB；已含运行依赖、前端库和全部素材，包括中文、日文两套干员语音和官方 3D 棋盘、各战场官方场景等本地客户端素材），解压后把里面的 `Stronghold-Protocol` 文件夹放到上述位置。不需要 Git，首次启动也不用再下载素材。素材版权归上海鹰角网络 / Yostar，仅限非商业使用，见 [NOTICE.md](../NOTICE.md)。
-   - **精简包**：同一页面的 `Stronghold-Protocol-v<版本>-lite.zip`（约 22 MB）。代码、运行依赖和前端库与完整包相同，但不带素材：美术、Spine 模型、音频（含两套干员语音）、字体、表情和「玩法说明」教程图在首次启动时由 setup 从公开镜像下载（约 550 MB，显示进度，可中断续传；镜像设置见下面的「国内镜像下载」）。官方 3D 棋盘等本地客户端素材需要用本机客户端提取，或从同一版本的完整包复制（第 6 节）。适合下载大文件不方便、或想先下一个小包的情况；放置方式同完整包。
+   - **完整包（推荐）**：在本 fork 的 [Releases](https://github.com/YinqiMargatroid/Stronghold-Protocol-Six-Player/releases) 页面下载 `Stronghold-Protocol-Six-Player-v0.2.5-six-player.2.zip`（约 550 MB，解压后约 780 MB；已含运行依赖、前端库和全部素材，包括中文、日文两套干员语音和官方 3D 棋盘、各战场官方场景等本地客户端素材），解压后把里面的 `Stronghold-Protocol` 文件夹放到上述位置。不需要 Git，首次启动也不用再下载素材。素材版权归上海鹰角网络 / Yostar，仅限非商业使用，见 [NOTICE.md](../NOTICE.md)。
+   - **精简包**：同一页面的 `Stronghold-Protocol-Six-Player-v0.2.5-six-player.2-lite.zip`（约 23 MB）。代码、运行依赖和前端库与完整包相同，但不带素材：美术、Spine 模型、音频（含两套干员语音）、字体、表情和「玩法说明」教程图在首次启动时由 setup 从公开镜像下载（约 550 MB，显示进度，可中断续传；镜像设置见下面的「国内镜像下载」）。官方 3D 棋盘等本地客户端素材需要用本机客户端提取，或从同一版本的完整包复制（第 6 节）。适合下载大文件不方便、或想先下一个小包的情况；放置方式同完整包。
    - **源码**：
      ```powershell
-     git clone https://github.com/sganggs/Stronghold-Protocol.git C:\Stronghold-Protocol
+     git clone https://github.com/YinqiMargatroid/Stronghold-Protocol-Six-Player.git C:\Stronghold-Protocol
      ```
 3. 双击 `C:\Stronghold-Protocol\scripts\start-windows.bat`。首次会：安装依赖（`npm ci`；整合包已含，跳过）→ 复制前端库（整合包已含，跳过）→ 下载约 550 MB 素材（完整包已含，跳过；精简包和源码在这一步下载，显示进度，中断后再次启动会续传）→ 若检测到本机的明日方舟客户端，询问是否提取官方贴图（可跳过）→ 启动服务器并打开浏览器。
 4. 窗口里会打印朋友可用的地址，例如 `http://192.168.1.23:3000`。用另一台设备打开它确认能进入。关闭窗口即停止服务器。
+
+六人局第 10 回合的固定信标补给默认开启；若要关闭，启动脚本可加 `--no-round10-beacon`。此参数只影响新启动的服务器，普通信标仍可购买。
 
 等价的手动命令：`npm ci`、`node tools/setup.mjs`、`npm start`。
 
@@ -116,6 +120,8 @@ nssm start StrongholdProtocol
 </details>
 
 ### 1.5 更新
+
+六人版源码应从本 fork 的 `master` 更新。以下「更新包」流程是上游原版的参考说明；本次六人版未发布更新包，也不能使用原项目的四人版更新包。整合包用户升级六人版时，请先查看本 fork 后续 release 的兼容性说明。
 
 ```powershell
 cd C:\Stronghold-Protocol
@@ -307,7 +313,7 @@ services:
 
 表情（6 套 × 6 个）和「玩法说明」的 19 页教程图公开镜像也有：`node tools/setup.mjs` 会和其他素材一起下载（约 21 MB），不需要客户端；有本地素材时优先显示本地的。
 
-**没有客户端的服务器**想要上表中的官方素材：从**同一版本**的完整包（[Releases](https://github.com/sganggs/Stronghold-Protocol/releases)）里，把 `public/assets/local/` 文件夹和 `data/local-assets.json` 复制到服务器项目目录下的相同位置。服务器每次请求都会重新读取这两处，不必重启，玩家刷新页面即可。一定要用与服务器代码相同版本的完整包：各版本提取的内容和清单可能不同（例如灼热 / 炽焰源石虫的模型是 0.1.0 之后才加入的，召唤物模型是 0.2.0 加入的），混用其他版本的文件会缺图或用错图。复制后 `node tools/doctor.mjs` 会显示本地素材的条目数和「3D 棋盘可用」。
+**没有客户端的服务器**想要上表中的官方素材：从**同一版本六人版**的完整包（[Releases](https://github.com/YinqiMargatroid/Stronghold-Protocol-Six-Player/releases)）里，把 `public/assets/local/` 文件夹和 `data/local-assets.json` 复制到服务器项目目录下的相同位置。服务器每次请求都会重新读取这两处，不必重启，玩家刷新页面即可。一定要用与服务器代码相同版本的完整包：各版本提取的内容和清单可能不同（例如灼热 / 炽焰源石虫的模型是 0.1.0 之后才加入的，召唤物模型是 0.2.0 加入的），混用其他版本的文件会缺图或用错图。复制后 `node tools/doctor.mjs` 会显示本地素材的条目数和「3D 棋盘可用」。
 
 **0.2.0 之前提取过的**：召唤物模型是 0.2.0 新增的提取项，旧的提取结果里没有（`node tools/setup.mjs` 会提示「缺少新版的自选召唤物模型」）。有客户端的电脑运行 `node tools/setup.mjs --local` 重新提取即可，只想补这一项也可以在提取用的 Python 环境里运行 `tools/local-extract/extract.py --only spine/token`（新文件写入 `public/assets/local/spine/token/`，清单里其他条目保持不变）。
 
@@ -317,7 +323,7 @@ services:
 
 ## 7. 打包发布（维护者）
 
-Releases 的 zip（完整包、精简包，0.2.1 起还有更新包）由 `tools/package.mjs` 生成，在**源码仓库**里运行（整合包里没有这个工具）：
+Releases 的 zip 由 `tools/package.mjs` 在**源码仓库**里生成（整合包里没有这个工具）。本 fork 当前发布完整包与精简包；下方的更新包命令是上游流程参考，本次六人版没有可用的旧六人完整包作为更新基线：
 
 ```bash
 npm run package -- --dry-run --list   # 只检查：列出每个文件和大小，不写任何文件（精简包加 --lite）
@@ -325,6 +331,8 @@ npm run package -- --out <目录>        # 完整包 Stronghold-Protocol-v<版�
 npm run package:lite -- --out <目录>   # 精简包 Stronghold-Protocol-v<版本>-lite.zip
 npm run package -- --update --from <旧版本的完整包>[,<…>] --out <目录>   # 更新包 Stronghold-Protocol-v<版本>-update.zip
 ```
+
+本 fork 的六人版 `v0.2.5-six-player.2` 发布时，将生成的完整包和精简包分别命名为 `Stronghold-Protocol-Six-Player-v0.2.5-six-player.2.zip` 与 `Stronghold-Protocol-Six-Player-v0.2.5-six-player.2-lite.zip`；zip 内的顶层目录仍是 `Stronghold-Protocol/`。
 
 完整包在打包机已经提取战场场景时带上 `public/assets/local/scene/`（`--dry-run` 摘要里的 `battlefield scenes` 一行）。还没有提取时完整包仍能打，棋盘用金属地块。要带上 11 个官方场景，先运行 `python3 tools/local-extract/fetch_scenes.py`，再用提取环境的 Python 运行 `tools/local-extract/extract.py --only scene`（或 `node tools/setup.mjs --scenes`），然后再 `npm run package`。精简包不带场景。`.cache/official-scenes/` 在拒绝名单里，不会打进任何包。`tools/local-extract/scenes.py` 和 `fetch_scenes.py` 必须先提交：打包读的是 `git ls-files`，未提交的脚本不会进玩家包。
 
