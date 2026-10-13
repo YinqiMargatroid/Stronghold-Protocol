@@ -96,7 +96,7 @@ test('five and six player bounty drafts offer nine distinct cards with I/II/II s
   }
 });
 
-test('six-seat round rewards are independent of item shop stock and granted once per survivor', () => {
+test('six-seat R10 beacon supply is independent of item shop stock and granted once per survivor', () => {
   const h = makeMatch({ humans: 6, difficulty: 'HARD', fake: true, seed: 8643 }).start();
   try {
     h.toPrep(1);
@@ -111,15 +111,15 @@ test('six-seat round rewards are independent of item shop stock and granted once
     for (const player of h.m.order) assert.equal(beacons(player).filter((p) => p.meta.sixPlayerBeaconRound === 10).length, 1);
     h.m.startRound(12);
     h.m.startRound(14);
-    for (const player of h.m.order) assert.deepEqual(beacons(player).filter((p) => p.meta.sixPlayerBeaconRound).map((p) => p.meta.sixPlayerBeaconRound).sort((a, b) => a - b), [10, 12, 14]);
+    for (const player of h.m.order) assert.deepEqual(beacons(player).filter((p) => p.meta.sixPlayerBeaconRound).map((p) => p.meta.sixPlayerBeaconRound), [10]);
     h.invariants();
   } finally { h.m.dispose(); }
 });
 
-test('the R14 beacon immediately gives the replaced operator to the best matching teammate', () => {
+test('the R10 beacon gives the replaced operator to the best matching teammate next prep', () => {
   const h = makeMatch({ humans: 6, difficulty: 'HARD', fake: true, seed: 45 }).start();
   try {
-    h.toPrep(14);
+    h.toPrep(10);
     const m = h.m, sender = h.ps('p_0'), receiver = h.ps('p_1');
     const core = m.gd.visibleChess.find((id) => m.gd.chess(id).tier === 6 && m.pool.left(id) > 0 && m.gd.chess(id).bonds?.length);
     assert.ok(core);
@@ -128,9 +128,12 @@ test('the R14 beacon immediately gives the replaced operator to the best matchin
     assert.ok(mate);
     give(m, receiver, mate, 'board', legalTileFor(m, receiver, mate));
     const target = give(m, sender, core);
-    const beacon = beacons(sender).find((p) => p.meta.sixPlayerBeaconRound === 14);
-    assert.equal(sender.pieceView(beacon).giftTiming, 'immediate');
+    const beacon = beacons(sender).find((p) => p.meta.sixPlayerBeaconRound === 10);
+    assert.ok(beacon);
     assert.deepEqual(m.handle(sender.playerId, { t: 'g.equip', itemUid: beacon.uid, targetUid: target.uid }), { ok: true });
+    assert.ok(![...receiver.hand, ...receiver.temp].some((p) => p?.id === core));
+    assert.ok(sender.effects.some((e) => e.id === `gift:${beacon.uid}`));
+    h.toPrep(11);
     assert.ok([...receiver.hand, ...receiver.temp].some((p) => p?.id === core));
     assert.ok(!sender.effects.some((e) => e.id === `gift:${beacon.uid}`));
     h.invariants();

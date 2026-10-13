@@ -1,6 +1,6 @@
 // Six-seat milestone rewards are separate system supplies, not copies from the finite shop stock.
 export const ROUND_BEACON_ITEM = 'chess_item_5_04_e_a';
-export const SIX_PLAYER_BEACON_ROUNDS = new Set([10, 12, 14]);
+export const SIX_PLAYER_BEACON_ROUNDS = new Set([10]);
 
 export function milestoneBeaconRound(match, itemId, source) {
   return source === 'sixPlayerBeacon' && itemId === ROUND_BEACON_ITEM && !match.isSolo
