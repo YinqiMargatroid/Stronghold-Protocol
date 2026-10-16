@@ -29,7 +29,7 @@ The nine-card client path follows Rhine's [draft normalizer](https://github.com/
 - The package tests: 22 passed, 0 failed. The Windows plugin-import tests: 31 passed, 0 failed after adapting the temporary-directory fixtures and plugin import view for Windows junctions.
 - `npm run ci -- --only setup,lint,imports,typecheck`: all selected steps passed; lint reported 0 errors.
 - `npm run golden`: 288 scenarios match, with no golden files changed.
-- The full Node test suite was attempted serially on Windows but did not finish: the inherited 0.3.0 `contentBattle` browser-style loader test waits on dynamic imports from its temporary copied simulation tree. Upstream 0.3.0 CI is also failing. Browser E2E and a full six-human playthrough were not run.
+- The inherited 0.3.0 browser-style loader tests originally deadlocked on Windows because their copied simulation tree included Node-only `nodeData.js`; the corrected path filters passed 23 focused browser-loader tests. A serial full Node run was stopped during its long full-match cases after more than 3,100 passing test lines and no failures at that point. Separately, an upstream Studio/symlink spotcheck had 13 failures on this Windows machine because file symlinks require privileges here. Upstream 0.3.0 CI is also failing, so a green full-suite result is not claimed. Browser E2E and a full six-human playthrough were not run.
 - Git source excludes `public/assets/`, `data/local-assets.json`, caches, dependencies, and local extraction results. The fork's full release bundle includes checked assets and scenes; the lite bundle prepares assets at first start. Upstream release archives are four-seat builds and are not compatible updates for this fork.
 
 ## Following upstream
