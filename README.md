@@ -2,11 +2,11 @@
 
 《明日方舟》季节性自走棋塔防玩法「卫戍协议：盟约」的**非官方同人复刻**：浏览器即开即玩，单人或 1–6 人联机合作。
 
-> **社区六人分支（基于上游 0.2.6）**：这是 [原项目](https://github.com/sganggs/Stronghold-Protocol) 的独立 fork，并非原项目发布版或官方玩法。只移植与人数直接相关的规则，未加入新盟约、干员与素材；开局 5 或 6 人的对局默认在第 10 回合发放额外补给信标，可用启动参数关闭。规则依据、验证结果和后续同步方法见 [六人分支说明](docs/LOCAL-SIX-PLAYER.md)。本 fork 的 [Releases](https://github.com/YinqiMargatroid/Stronghold-Protocol-Six-Player/releases) 提供六人版整合包；原项目发布的四人版整合包和更新包不能用于本分支。
+> **社区六人分支（基于上游 0.3.0）**：这是 [原项目](https://github.com/sganggs/Stronghold-Protocol) 的独立 fork，并非原项目发布版或官方玩法。只移植与人数直接相关的规则，未加入新盟约、干员与素材；开局 5 或 6 人的对局默认在第 10 回合发放额外补给信标，可用启动参数关闭。规则依据、验证结果和后续同步方法见 [六人分支说明](docs/LOCAL-SIX-PLAYER.md)。本 fork 的 [Releases](https://github.com/YinqiMargatroid/Stronghold-Protocol-Six-Player/releases) 提供六人版整合包；原项目发布的四人版整合包和更新包不能用于本分支。
 
-## 相较于上游 0.2.6 的改动
+## 相较于上游 0.3.0 的改动
 
-本分支已合并[上游 0.2.6 提交 `488db49f`](https://github.com/sganggs/Stronghold-Protocol/commit/488db49f)。BAN、悬赏、首领血量和固定信标以**开局座位数**计算（包括 AI），离开或淘汰后不重新计算；首领分场则以当时的存活人数计算。
+本分支已合并[上游 0.3.0 提交 `c24e17ee`](https://github.com/sganggs/Stronghold-Protocol/commit/c24e17eec3af1e6dedfa9935a6d15245cf2f4586)。BAN、悬赏、首领血量和固定信标以**开局座位数**计算（包括 AI），离开或淘汰后不重新计算；首领分场则以当时的存活人数计算。
 
 | 项目 | 本六人分支的新增或调整 |
 |---|---|
@@ -16,11 +16,11 @@
 | 悬赏选卡 | 开局 5 或 6 人时，悬赏轮选由 6 张增至 9 张：额外 3 张现有击杀悬赏（Ⅰ / Ⅱ / Ⅱ 阶，奖励 1 / 2 / 2）；前端显示全部 9 张并允许选择第 7–9 张。其他选卡类别仍为 6 张。 |
 | 固定信标补给 | 开局 5 或 6 人时默认仅在第 10 回合给每位存活玩家 1 个普通信标；4 人及以下无此固定补给。开服参数 `--no-round10-beacon` 可关闭，`--round10-beacon` 可明确开启；不影响商店里的普通信标。 |
 
-共享干员卡池继续使用上游 0.2.6 的 `economy.poolCopies` 基础数量和 `economy.coopPoolMultiplier = 2`，**本分支没有再按人数扩容卡池**。本分支也没有加入新盟约、干员、物品或场景内容。规则细节和测试见[六人分支说明](docs/LOCAL-SIX-PLAYER.md)。
+共享干员卡池继续使用上游 0.3.0 的 `economy.poolCopies` 基础数量和 `economy.coopPoolMultiplier = 2`，**本分支没有再按人数扩容卡池**。本分支也没有加入新盟约、干员、物品或场景内容。规则细节和测试见[六人分支说明](docs/LOCAL-SIX-PLAYER.md)。
 
 Windows 可在项目根目录双击 **`start-server.cmd`** 手动开服。它会调用自带的启动流程，优先使用镜像补齐素材，照常检查并提取场景，且不自动打开浏览器；附加启动参数会原样透传，例如 `start-server.cmd --no-round10-beacon`。本脚本已纳入源码和六人版整合包。
 
-![version](https://img.shields.io/badge/version-0.2.6-2ea44f)
+![version](https://img.shields.io/badge/version-0.3.0-2ea44f)
 ![license](https://img.shields.io/badge/code%20license-GPL--3.0--or--later-blue)
 ![node](https://img.shields.io/badge/node-22%20%7C%2024-339933)
 
@@ -44,9 +44,9 @@ English summary: [below](#english).
 
 ## 目录
 
-- [相较于上游 0.2.6 的改动](#相较于上游-026-的改动) · [声明](#声明) · [简介](#简介) · [功能一览](#功能一览)
+- [相较于上游 0.3.0 的改动](#相较于上游-030-的改动) · [声明](#声明) · [简介](#简介) · [功能一览](#功能一览)
 - [快速开始](#快速开始)：[整合包](#方式一整合包推荐) · [从源码运行](#方式二从源码运行) · [系统要求](#系统要求) · [端口与配置](#端口与配置) · [局域网联机](#和朋友一起玩局域网)
-- [联机方式](#联机方式) · [操作](#操作) · [文档](#文档) · [开发与测试](#开发与测试) · [项目结构](#项目结构)
+- [插件](#插件) · [联机方式](#联机方式) · [操作](#操作) · [文档](#文档) · [开发与测试](#开发与测试) · [项目结构](#项目结构)
 - [许可证](#许可证) · [致谢与数据来源](#致谢与数据来源) · [贡献](#贡献)
 
 ## 简介
@@ -55,7 +55,7 @@ English summary: [below](#english).
 
 - **独立模拟**（单人）与**同盟模拟**（1–6 人**合作**，没有 PvP；空位可以加 AI 队友）。
 - 服务器是一个 Node.js 程序，**战斗在各玩家的浏览器里模拟**（和官方一样），服务器只管经济与回合，一台低功耗小主机就能开服。
-- 当前版本 0.2.6：减轻开服电脑的流量（静音时不下载背景音乐、WebSocket 消息压缩、素材地址带内容哈希长期缓存、brotli 压缩、教程图改用 WebP），官方场景光照改回官方值，每回合开始重播干员入场动画，新增「弹药数量」选项，并修复了单位多时模型被裁切、留下残影等 0.2.5 发布后反馈的问题，详见 [CHANGELOG.md](CHANGELOG.md)。仍有少数规则按推断实现，与官方不一致的地方欢迎在 Issue 里反馈。
+- 当前版本 0.3.0：加入插件系统——外观、数据、DSL、脚本与界面插件，浏览器插件工作台和安装工具；可选的「官方特效」用本机客户端提取的官方战斗特效（完整包附带）；官方场景按客户端着色器重新打光并补上水面，伊利昂的木驮兽和「越长尘」会载客，冻结后手动刷新会取消冻结，机器人的布阵、采购和演习也有改进，详见 [CHANGELOG.md](CHANGELOG.md)。仍有少数规则按推断实现，与官方不一致的地方欢迎在 Issue 里反馈。
 
 ## 功能一览
 
@@ -82,14 +82,13 @@ English summary: [below](#english).
 
 > 请只下载这个 fork 发布的六人版包；原项目的四人版整合包和更新包不能覆盖到六人版目录。
 
-[六人版 Releases](https://github.com/YinqiMargatroid/Stronghold-Protocol-Six-Player/releases/latest) 提供以下两种包，代码和运行依赖相同，二选一：
+[六人版 Releases](https://github.com/YinqiMargatroid/Stronghold-Protocol-Six-Player/releases/latest) 提供以下包：
 
-- **完整包** `Stronghold-Protocol-Six-Player-v0.2.6-six-player.1.zip`（约 550 MB，解压后约 780 MB）：附带全部美术 / 音频（含中文、日文两套干员语音、官方 3D 棋盘贴图和 11 个战场的官方场景），首次启动无需再下载素材。**推荐。**
-- **精简包** `Stronghold-Protocol-Six-Player-v0.2.6-six-player.1-lite.zip`（约 23 MB）：不带素材，第一次启动时自动下载美术、Spine 模型、音频、字体、表情和教程图；官方 3D 棋盘等本地客户端素材需要自行提取或从同一版本完整包复制。适合先下载小包的情况。
+- **完整包** `Stronghold-Protocol-Six-Player-v0.3.0-six-player.1.zip`：含运行依赖、五种语言的干员语音、官方 3D 棋盘、战场场景和官方战斗特效。解压后可直接运行。**推荐。**
+- **精简包** `Stronghold-Protocol-Six-Player-v0.3.0-six-player.1-lite.zip`：含程序和运行依赖，首次启动下载公开素材（约 720 MB）；官方 3D 棋盘与战斗特效等本地客户端素材需要自行提取或从同版本完整包复制。
+- **更新包** `Stronghold-Protocol-Six-Player-v0.3.0-six-player.1-update.zip`：用于此前六人版 0.2.6 完整包安装目录；停服后覆盖解压再启动。请勿用于上游四人版或其他版本。
 
-本次六人版没有更新包。今后升级六人版时，请查看本 fork 的新 release 说明；不要使用原项目的四人版更新包。
-
-两种包都只含运行和部署需要的文件（服务器、客户端、数据、启动脚本、setup / doctor / 素材下载工具、许可证与说明、[docs/PLAYING.md](docs/PLAYING.md) 和 [docs/DEPLOY.md](docs/DEPLOY.md)）；测试、开发工具和设计文档只在源码仓库里。
+两种包都包含运行和部署文件，以及插件作者需要的工具、模板、Schemas、插件文档和战斗测试助手。完整开发测试与设计文档仍在源码仓库里。
 
 1. **安装 Node.js 22 或 24（LTS）**
    - Windows：在 PowerShell 里运行 `winget install OpenJS.NodeJS.LTS`，或到 <https://nodejs.org/zh-cn/download> 下载安装包。
@@ -107,7 +106,7 @@ English summary: [below](#english).
 git clone https://github.com/YinqiMargatroid/Stronghold-Protocol-Six-Player.git
 cd Stronghold-Protocol-Six-Player
 npm install        # 安装依赖（postinstall 会把 pixi / preact / three 复制到 public/vendor）
-npm run setup      # 检查环境，并从公开镜像下载约 550 MB 美术 / 音频（可中断，再次运行会续传）
+npm run setup      # 检查环境，并从公开镜像下载约 720 MB 美术 / 音频（可中断，再次运行会续传）
 npm start          # 启动服务器：http://localhost:3000
 ```
 
@@ -115,7 +114,7 @@ npm start          # 启动服务器：http://localhost:3000
 
 开局 5 或 6 人的对局默认在第 10 回合发放固定信标补给；4 人局不会获得该固定补给。开服时给启动脚本加 `--no-round10-beacon` 可关闭，例如 Windows 运行 `.\start-server.cmd --no-round10-beacon`；加 `--round10-beacon` 可明确开启。直接使用 `npm start` 时，可设置 `SP_SIX_PLAYER_ROUND10_BEACON=0` 关闭（环境变量沿用原名称）。启动参数只对新启动的服务器生效，普通信标的购买和效果不受影响。
 
-- **本地客户端素材（可选）**：官方 3D 棋盘、部分官方界面图标（交流按钮与表情面板的边框、模组类型图标等）、灼热 / 炽焰源石虫和 39 个召唤物（多数自选召唤物）的官方模型需要从本机的《明日方舟》PC 客户端提取（Windows 原生客户端、macOS 的 CrossOver 或 PlayCover）。`npm run setup` 检测到客户端时会询问是否提取（需要 Python 3.8+，依赖装在项目内的 `.venv-extract`，不影响系统）；之后可以用 `node tools/setup.mjs --local` 重新提取，或用 `--game "<…/StreamingAssets/AB/Windows>"` 指定路径。没有客户端时游戏照常运行，这几样换成替代样式：2D 棋盘、样式相近的图标、染色的普通源石虫、召唤物头像。表情和「玩法说明」的教程图随上面的素材一起从公开镜像下载，不需要客户端。没有客户端的服务器（例如 Linux VPS）也可以从**同一版本**的整合包（完整包；精简包没有）里复制 `public/assets/local/` 和 `data/local-assets.json`，见 [docs/DEPLOY.md](docs/DEPLOY.md) 的「本地客户端素材」。
+- **本地客户端素材（可选）**：官方 3D 棋盘、官方战斗特效（0.3.0「官方特效」）、部分官方界面图标（交流按钮与表情面板的边框、模组类型图标等）、灼热 / 炽焰源石虫和 39 个召唤物（多数自选召唤物）的官方模型需要从本机的《明日方舟》PC 客户端提取（Windows 原生客户端、macOS 的 CrossOver 或 PlayCover）。`npm run setup` 检测到客户端时会询问是否提取（需要 Python 3.8+，依赖装在项目内的 `.venv-extract`，不影响系统）；之后可以用 `node tools/setup.mjs --local` 重新提取，或用 `--game "<…/StreamingAssets/AB/Windows>"` 指定路径。没有客户端时游戏照常运行，这几样换成替代样式：2D 棋盘、样式相近的图标、染色的普通源石虫、召唤物头像。表情和「玩法说明」的教程图随上面的素材一起从公开镜像下载，不需要客户端。没有客户端的服务器（例如 Linux VPS）也可以从**同一版本**的整合包（完整包；精简包没有）里复制 `public/assets/local/` 和 `data/local-assets.json`，见 [docs/DEPLOY.md](docs/DEPLOY.md) 的「本地客户端素材」。
 - 素材下载优先使用 GitHub，失败时自动改用 jsDelivr 镜像。
 - `npm run doctor`（即 `node tools/doctor.mjs`）可以随时诊断：Node 版本、素材是否完整、端口占用、局域网地址和防火墙。
 
@@ -123,9 +122,9 @@ npm start          # 启动服务器：http://localhost:3000
 
 | 项目 | 要求 |
 |---|---|
-| 开服的电脑 | Windows / macOS / Linux，Node.js 22 或 24（LTS）；磁盘约 700–850 MB（素材、依赖与本地提取贴图：完整包解压后约 790 MB）；内存空闲约 100 MB，每局再加几 MB |
+| 开服的电脑 | Windows / macOS / Linux，Node.js 22 或 24（LTS）；磁盘约 1.2–1.4 GB（素材、依赖与本地提取的贴图、场景和特效：完整包解压后约 1.16 GB）；内存空闲约 100 MB，每局再加几 MB |
 | 玩家 | 支持 WebGL 的现代浏览器（Chrome / Edge / Firefox / Safari 最新版），电脑、手机或平板（横屏） |
-| 网络 | 首次进入游戏时，每位玩家要从开服的电脑下载几十 MB 素材（之后走浏览器缓存）；对局中流量很小 |
+| 网络 | 首次进入游戏时，每位玩家要从开服的电脑下载几十 MB 素材（之后走浏览器缓存）；对局中流量很小。已有素材的玩家可以在标题画面点「导入素材包」（「下载完整素材」旁边），从素材包 zip、完整包 zip 或自己的 `public/assets` 文件夹导入，这部分美术不再从开服的电脑下载；需要 HTTPS 或 localhost（[docs/DEPLOY.md](docs/DEPLOY.md) 2.5 节）。0.3.0 的素材包 `Stronghold-Protocol-v0.3.0-assets.zip` 由维护者另行提供下载，不在 Releases 附件里 |
 
 显卡较弱时可以在「设置」里调低画质，或在网址后加 `?board=2d`（强制 2D 棋盘）/ `?render=fallback`（不用 WebGL 的简化画面）。
 
@@ -140,6 +139,7 @@ npm start          # 启动服务器：http://localhost:3000
 | `SP_COMBAT` | `client` | `client`：各玩家浏览器模拟自己的战斗（服务器负载极低）；`server`：由服务器模拟并推流 |
 | `SP_VERIFY` | `off` | 服务器复算客户端上报的战斗结果：`off` / `sample`（约 1/8 抽查）/ `all`（全部复算，更耗 CPU） |
 | `SP_SIX_PLAYER_ROUND10_BEACON` | `1` | 开局 5 或 6 人的对局在第 10 回合固定获得信标；设为 `0` 可关闭。环境变量沿用原名称；通过启动脚本也可使用 `--no-round10-beacon` 关闭、`--round10-beacon` 开启；普通信标不受影响 |
+| `SP_BOT_REHEARSAL` | 不设（服务器试算） | 仅 `host` 让房主浏览器帮 AI 队友试算布阵（同源 Worker，只回候选序号）；不设或 `server` 仍由服务器试算。房主无法完成时服务器用同一批候选接手。玩法插件房间始终由服务器试算。真人「AI 托管」和正式战斗不受影响 |
 | `TRUST_PROXY` | `auto` | 是否信任 `X-Forwarded-For` 等转发头：`auto` 只信任来自本机 / 内网的代理；`1` 总是；`0` 从不 |
 | `DEBUG` | 空 | 设为任意值输出详细日志 |
 | `SP_NO_BROWSER` | 空 | 设为 `1` 时启动脚本不自动打开浏览器 |
@@ -156,6 +156,17 @@ npm start          # 启动服务器：http://localhost:3000
 4. 同一 Wi-Fi / 路由器下的朋友打开启动窗口里列出的地址（形如 `http://192.168.x.x:3000`）即可。打不开时多半是防火墙：Windows 首次启动时在弹窗中允许「专用网络」，或运行 `npm run doctor` 查看具体命令；访客 Wi-Fi 常开启「AP 隔离」，也会导致连不上。
 
 刷新页面或断线后，同盟模拟 10 分钟内、独立模拟 24 小时内重新打开即可回到原座位。服务器把房间和对局都保存在内存里，**重启服务器会结束所有对局**。
+
+## 插件
+
+0.3.0 开发版已支持插件；不开插件时按原版游玩。
+
+- **服主安装**：将插件文件夹放进服务器的 `plugins/`，或用 `node tools/plugin.mjs install <zip路径或HTTPS地址>` 安装；远程地址需带 `--sha256`。工作台也支持从社区目录安装和导入 Forge 工坊包。服主可在 `plugins/config.json` 限定可用插件。
+- **房主开启**：在房间顶部的「原版 / 插件 ×N」面板里选外观或玩法插件、修改插件设置、选择插件模式。玩法插件的内容会由所有玩家下载并校验，房间标为「非官方」，统计总览默认不计入。
+- **玩家个人设置**：「设置 → 外观插件 / 界面插件」只影响自己的浏览器；个人不能另装玩法插件改变房间规则。外观插件只换画面与声音，界面插件只读允许的对局信息。
+- **自己制作**：打开启动窗口 `Studio:` 行的地址，使用 `/studio/` 插件工作台选模板、按官方名称选目标、拖放素材、实时预览、试一场并回放，最后打包分享。工作台限本机和局域网，修改需要钥匙。
+
+脚本执行默认关闭。服主可以用 `SP_PLUGIN_SCRIPTS=sandbox` 开启沙箱脚本（或启动时加 `--scripts sandbox`；Windows 双击 `scripts\start-windows-sandbox.bat`）；原生受信任模式还需审查、固定锁文件哈希和玩家同意，公网部署需 `trusted-force`。开服设置见 [部署指南](docs/DEPLOY.md)，作者从[插件新手指南](docs/PLUGIN-GUIDE.md)开始，格式与限制见[插件参考](docs/PLUGINS.md)，接口列表见[插件 API 表](docs/PLUGIN-API.md)。
 
 ## 联机方式
 
@@ -184,7 +195,7 @@ npm start          # 启动服务器：http://localhost:3000
 | 出售 / 撤退 / 销毁装备 | 点击单位所在的格子 → 底部按钮「出售 +1」「撤退」；也可以把棋盘上的干员拖回整备区撤退。整备区里的装备与法术只能「销毁」，已配发的装备锁定在干员身上（干员出售或合成精锐时退回整备区） |
 | 装备 | 把装备拖到干员所在的格子上（每人 2 件；满了会弹出替换窗口，被替换的一件会被销毁）；法术拖到地块上并选方向 |
 | 查看详情 | 右键或长按单位 / 卡牌（属性为实时数值，高于基础值为绿色、低于为红色） |
-| 快捷键 | `R` 刷新 · `F` 冻结 · `D` 升级 · `Q` 撤退 / `X` 出售选中的干员 · `Space` 准备就绪 · `Esc` 取消 / 关闭；除 `Esc` 外都可以在「设置 → 快捷键」里改成别的键（[玩法指南 §11](docs/PLAYING.md#11-快捷键)） |
+| 快捷键 | `W` 购买鼠标指向的商品（无需点击） · `R` 刷新 · `F` 冻结 · `D` 升级 · `Q` 撤退 / `X` 出售鼠标指向的干员（无需点击） · `Space` 准备就绪 · `Esc` 取消 / 关闭；除 `Esc` 外都可以在「设置 → 快捷键」里改成别的键（[玩法指南 §11](docs/PLAYING.md#11-快捷键)） |
 | 方向轮盘键盘操作 | 方向键预览 · `Enter` 确认 · `Esc` 取消 |
 | 暂停（独立模拟） | 作战中（含最终攻势 / 隐秘核心）点顶栏的「暂停」或按 `Space`，再点「继续作战」（或 `Space`）继续；同盟模拟的作战不能暂停 |
 | 表情 | 左下角「交流」，左右滑动（或方向键）换主题，冷却 1 秒 |
@@ -199,6 +210,7 @@ npm start          # 启动服务器：http://localhost:3000
 |---|---|
 | [CHANGELOG.md](CHANGELOG.md) | 更新记录：每个版本修复了什么、哪些反馈经核实不是问题 |
 | [docs/PLAYING.md](docs/PLAYING.md) | 玩法指南：流程、经济、招募与晋升、摆阵、联防、盟约、最终攻势、结算称号 |
+| [docs/PLUGINS.md](docs/PLUGINS.md) · [docs/PLUGIN-GUIDE.md](docs/PLUGIN-GUIDE.md) | 插件格式、安装与服主策略；中文工作台入门、DSL 和对战试验 |
 | [docs/DEPLOY.md](docs/DEPLOY.md) | 部署指南：Windows 开服与开机自启、防火墙、组网 / 隧道、反向代理与 HTTPS、Docker、systemd、排错 |
 | [docs/WINDOWS.md](docs/WINDOWS.md) | Windows 便携包：怎么打一份「零安装」包（`scripts/make-windows-bundle.mjs`）、包里放了什么、授权注意事项 |
 | [docs/DESIGN.md](docs/DESIGN.md) | 架构与契约（英文）：索引，按章节号找到文件；现行规则在 `docs/design/`（范围与目录分工、坐标与时间、战斗引擎、对局、网络协议、渲染与 UI），各次试玩和各版本的规则修订与依据在 `docs/history/` |
@@ -273,11 +285,11 @@ node tools/perfbench.mjs --cpu 1,4,6 --profile             # 真实战斗的帧�
 
 ## English
 
-An **unofficial, non-commercial fan remake** of Arknights' seasonal auto-chess tower-defense mode *Stronghold Protocol: Alliance*, played in the browser: solo, or 1–6 player co-op (AI teammates can fill seats). This community fork applies seat-related rules to upstream 0.2.6, with a local round-10-only beacon supply enabled by default and configurable at launch. The fork's Releases provide six-seat full and lite bundles; upstream Releases contain the four-seat build and cannot update this fork. See [the branch notes](docs/LOCAL-SIX-PLAYER.md) for sources, verification and upstream sync steps. Combat is simulated in each player's browser, so a low-power PC can host.
+An **unofficial, non-commercial fan remake** of Arknights' seasonal auto-chess tower-defense mode *Stronghold Protocol: Alliance*, played in the browser: solo, or 1–6 player co-op (AI teammates can fill seats). This community fork applies seat-related rules to upstream 0.3.0, with a local round-10-only beacon supply enabled by default and configurable at launch. The fork's Releases provide six-seat full, lite and update bundles; upstream Releases contain the four-seat build and cannot update this fork. See [the branch notes](docs/LOCAL-SIX-PLAYER.md) for sources, verification and upstream sync steps. Combat is simulated in each player's browser, so a low-power PC can host.
 
 To run this six-seat fork from source, clone its `master` branch and follow the source setup steps above.
 
-- **Run:** download the full six-seat bundle `Stronghold-Protocol-Six-Player-v0.2.6-six-player.1.zip` (~550 MB, including both operator voice dubs and all official battlefield scenes) from [this fork's Releases](https://github.com/YinqiMargatroid/Stronghold-Protocol-Six-Player/releases/latest), or use its lite bundle and download the art on first start. Install Node.js 22 or 24, then double-click the root `start-server.cmd` (Windows: mirror-first asset setup, normal scene extraction, no automatic browser) or run `./scripts/start.sh` (macOS / Linux) and open <http://localhost:3000>. This fork currently has no update zip. From source: `npm install && npm run setup && npm start`; the local Arknights client provides optional 3D board and model assets, which are already included in the full bundle.
+- **Run:** download the full six-seat bundle `Stronghold-Protocol-Six-Player-v0.3.0-six-player.1.zip` (including all operator voice dubs, official battlefield scenes and effects) from [this fork's Releases](https://github.com/YinqiMargatroid/Stronghold-Protocol-Six-Player/releases/latest), or use its lite bundle and download public art on first start. The update bundle upgrades an existing six-seat 0.2.6 full installation. Install Node.js 22 or 24, then double-click the root `start-server.cmd` (Windows: mirror-first asset setup, scene extraction, no automatic browser) or run `./scripts/start.sh` (macOS / Linux) and open <http://localhost:3000>. From source: `npm install && npm run setup && npm start`; the local Arknights client provides optional 3D board and official effects assets, which are included in the full bundle.
 - **Languages:** Chinese (the default), English, 日本語, 한국어 and 繁體中文 — switch on the title screen or in Settings. Game texts come from the official clients; the Japanese, Korean and Traditional Chinese interface strings are machine translations (corrections welcome: [docs/I18N.md](docs/I18N.md)).
 - **Play with friends:** create a co-op room and share the 4-letter key or the `?room=KEY` link. On a LAN, use the address printed at start; otherwise use a virtual-LAN tool, a tunnel or a VPS — see [docs/DEPLOY.md](docs/DEPLOY.md).
 - **Disclaimer:** not affiliated with or endorsed by Hypergryph or Yostar. All Arknights names, art, audio, text and data are © their respective owners and are **not** covered by this project's GPL licence. For study and personal non-commercial use only — no selling, paid distribution, paid servers or monetisation of any kind. Content will be removed on request of the rights holders. Provided "as is", without warranty.
